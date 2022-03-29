@@ -8,11 +8,20 @@ targetScope = 'subscription'
 @description('Optional. The name of the resource group to deploy')
 param resourceGroupName string = 'validation-rg'
 
+@description('Optional. The name of the resource group to deploy')
+param storageAccountName string = 'validation-sa'
+
+@description('Optional. The name of the resource group to deploy')
+param keyVaultName string = 'validation-kv'
+
 @description('Optional. The location to deploy into')
 param location string = deployment().location
 
 @description('Optional. The name of the resource group to deploy')
-param secrets object 
+param secrets object = {}
+
+@description('Optional. Predefined role assignment')
+param roleAssignments array = []
 
 
 // =========== //
@@ -21,7 +30,7 @@ param secrets object
 
 // Resource Group
 module rg 'br/modules:microsoft.resources.resourcegroups:0.4.11' = {
-  name: 'bicepLiveDemo-rg'
+  name: resourceGroupName
   params: {
     name: resourceGroupName
     location: location
@@ -30,26 +39,22 @@ module rg 'br/modules:microsoft.resources.resourcegroups:0.4.11' = {
 
 // Key vault
 module kv 'br/modules:microsoft.keyvault.vaults:0.4.38' = {
-  scope: resourceGroup('bicepLiveDemo-rg')
-  name: 'bicepLiveDemo-kv'
+  scope: resourceGroup(rg.name)
+  name: keyVaultName
   params: {
-    name: 'bicepLiveDemo-kv'
+    name: keyVaultName
     location: location
-    
+    roleAssignments: roleAssignments
+    secrets: secrets
   }
-  dependsOn: [
-    rg
-  ]
 } 
 
 // Storage Account
 module sa 'br/modules:microsoft.storage.storageaccounts:0.4.39' = {
-  scope: resourceGroup('bicepLiveDemo-rg')
-  name: 'bicelivedemouatjleesa'
+  scope: resourceGroup(rg.name)
+  name: storageAccountName
   params: {
+    name: storageAccountName
     location: location
   }
-  dependsOn: [
-    rg
-  ]
 }

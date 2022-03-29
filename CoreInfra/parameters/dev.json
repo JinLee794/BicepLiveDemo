@@ -5,43 +5,18 @@
         "resourceGroupName": {
             "value": "CoreInfraBicepLive"
         },
+        "storageAccountName": {
+            "value": "biceplivedemosa"
+        },
+        "keyVaultName": {
+            "value": "bicepLiveDemo-kv"
+        },
         "location": {
             "value": "eastus"
         },
-        "networkSecurityGroupName": {
-            "value": "coreInfraNSG01"
-        },
-        "vnetName": {
-            "value": "coreInfraVnet01"
-        },
-        "vNetAddressPrefixes": {
-            "value": [
-                "10.5.0.0/16"
-            ]
-        },
-        "subnets": {
-            "value": [
-                {
-                    "name": "data",
-                    "addressPrefix": "10.5.0.0/24",
-                    "networkSecurityGroupName": "coreInfraNSG01"
-                },
-                {
-                    "name": "web",
-                    "addressPrefix": "10.5.0.1/24",
-                    "networkSecurityGroupName": "coreInfraNSG01"
-                }
-            ]
-        },
+        
         "roleAssignments": {
             "value": [
-                {
-                    "roleDefinitionIdOrName": "Reader",
-                    "description": "Reader Role Assignment",
-                    "principalIds": [
-                        "fad4a18f-4297-47a0-85fd-2a1e8da7368f"
-                    ]
-                }
             ]
         },
         "secrets": {
@@ -54,13 +29,6 @@
                         "attributesExp": 1702648632,
                         "attributesNbf": 10000,
                         "roleAssignments": [
-                            {
-                                "roleDefinitionIdOrName": "Reader",
-                                "principalType": "ServicePrincipal",
-                                "principalIds": [
-                                    "fad4a18f-4297-47a0-85fd-2a1e8da7368f"
-                                ]
-                            }
                         ]
                     }
                 ]
