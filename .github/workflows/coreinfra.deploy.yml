@@ -27,10 +27,9 @@ jobs:
     - uses: actions/checkout@main
 
     - name: Azure Login
-      uses: Azure/login@v1
+      uses: azure/actions/login@v1
       with:
         creds: ${{ env.AZURE_CREDENTIALS }}
-        enable-AzPSSession: true
 
 
       # Deploy Bicep file
