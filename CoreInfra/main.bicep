@@ -1,4 +1,4 @@
-targetScope = 'subscription'
+targetScope = 'resourceGroup'
 
 // ================ //
 // Input Parameters //
@@ -29,7 +29,7 @@ param roleAssignments array = []
 // =========== //
 
 // Resource Group
-module rg 'br/modules:microsoft.resources.resourcegroups:0.4.11' = {
+module rg 'br/modules:microsoft.resources.tags:0.1.11' = {
   name: resourceGroupName
   params: {
     name: resourceGroupName
