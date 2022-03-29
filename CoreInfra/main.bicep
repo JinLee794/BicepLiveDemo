@@ -1,4 +1,4 @@
-targetScope = 'resourceGroup'
+targetScope = 'subscription'
 
 // ================ //
 // Input Parameters //
@@ -15,7 +15,7 @@ param storageAccountName string = 'validation-sa'
 param keyVaultName string = 'validation-kv'
 
 @description('Optional. The location to deploy into')
-param location string = deployment().location
+param location string = 'eastus'
 
 @description('Optional. The name of the resource group to deploy')
 param secrets object = {}
@@ -29,7 +29,7 @@ param roleAssignments array = []
 // =========== //
 
 // Resource Group
-module rg 'br/modules:microsoft.resources.tags:0.1.11' = {
+module rg 'br/modules:microsoft.resources.resourcegroups:0.4.11' = {
   name: resourceGroupName
   params: {
     name: resourceGroupName
