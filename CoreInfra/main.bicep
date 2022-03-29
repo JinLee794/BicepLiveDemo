@@ -35,6 +35,7 @@ module kv 'br/modules:microsoft.keyvault.vaults:0.4.38' = {
   params: {
     name: 'bicepLiveDemo-kv'
     location: location
+    
   }
   dependsOn: [
     rg
