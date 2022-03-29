@@ -1,6 +1,13 @@
 name: 'Deploy CoreInfra'
 
 on:
+  workflow_dispatch:
+    inputs:
+      removeDeployment:
+        type: boolean
+        description: 'Remove deployed module'
+        required: false
+        default: false
   push:
     branches:
       - main
