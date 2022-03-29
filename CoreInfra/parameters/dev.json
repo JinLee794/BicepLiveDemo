@@ -32,6 +32,39 @@
                     "networkSecurityGroupName": "coreInfraNSG01"
                 }
             ]
+        },
+        "roleAssignments": {
+            "value": [
+                {
+                    "roleDefinitionIdOrName": "Reader",
+                    "description": "Reader Role Assignment",
+                    "principalIds": [
+                        "fad4a18f-4297-47a0-85fd-2a1e8da7368f"
+                    ]
+                }
+            ]
+        },
+        "secrets": {
+            "value": {
+                "secureList": [
+                    {
+                        "name": "secretName",
+                        "value": "secretValue",
+                        "contentType": "Something",
+                        "attributesExp": 1702648632,
+                        "attributesNbf": 10000,
+                        "roleAssignments": [
+                            {
+                                "roleDefinitionIdOrName": "Reader",
+                                "principalType": "ServicePrincipal",
+                                "principalIds": [
+                                    "fad4a18f-4297-47a0-85fd-2a1e8da7368f"
+                                ]
+                            }
+                        ]
+                    }
+                ]
+            }
         }
     }
 }
