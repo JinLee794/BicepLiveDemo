@@ -1,0 +1,16 @@
+{
+    "moduleAliases": {
+        "br": {
+            "modules": {
+                "registry": "bicepsandboxmodules.azurecr.io",
+                "modulePath": "bicep/modules"
+            }
+        }
+    },
+    "cloud": {
+        "credentialPrecedence": [
+            "AzureCLI",
+            "AzurePowerShell"
+        ]
+    }
+}

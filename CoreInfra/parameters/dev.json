@@ -1,0 +1,37 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "resourceGroupName": {
+            "value": "CoreInfraBicepLive"
+        },
+        "location": {
+            "value": "eastus"
+        },
+        "networkSecurityGroupName": {
+            "value": "coreInfraNSG01"
+        },
+        "vnetName": {
+            "value": "coreInfraVnet01"
+        },
+        "vNetAddressPrefixes": {
+            "value": [
+                "10.5.0.0/16"
+            ]
+        },
+        "subnets": {
+            "value": [
+                {
+                    "name": "data",
+                    "addressPrefix": "10.5.0.0/24",
+                    "networkSecurityGroupName": "coreInfraNSG01"
+                },
+                {
+                    "name": "web",
+                    "addressPrefix": "10.5.0.1/24",
+                    "networkSecurityGroupName": "coreInfraNSG01"
+                }
+            ]
+        }
+    }
+}
