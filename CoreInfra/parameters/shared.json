@@ -1,0 +1,38 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "resourceGroupName": {
+            "value": "CoreInfraBicepLive"
+        },
+        "storageAccountName": {
+            "value": "biceplivedemosa"
+        },
+        "keyVaultName": {
+            "value": "bicepLiveDemo-kv"
+        },
+        "location": {
+            "value": "eastus"
+        },
+        
+        "roleAssignments": {
+            "value": [
+            ]
+        },
+        "secrets": {
+            "value": {
+                "secureList": [
+                    {
+                        "name": "secretName",
+                        "value": "secretValue",
+                        "contentType": "Something",
+                        "attributesExp": 1702648632,
+                        "attributesNbf": 10000,
+                        "roleAssignments": [
+                        ]
+                    }
+                ]
+            }
+        }
+    }
+}

@@ -16,6 +16,7 @@ on:
       - 'CoreInfra/**'
 
 env:
+  environment: 'dev'
   resourceGroupName: 'CoreInfraBicepLive'
   modulePath: 'CoreInfra'
   workflowPath: '.github/workflows/coreinfra.deploy.yml'
@@ -41,7 +42,9 @@ jobs:
         subscriptionId: ${{ secrets.AZURE_SUBSCRIPTION }}
         scope: resourcegroup
         template: '${{ env.modulePath }}/main.bicep'
-        parameters: '${{ env.modulePath }}/parameters/dev.json'
+        parameters: |
+          '${{ env.modulePath }}/parameters/${{ env.environment }}.json'
+          '${{ env.modulePath }}/parameters/shared.json'
         failOnStdErr: false
         
     - run: echo ${{ steps.deploy.outputs.containerName }}

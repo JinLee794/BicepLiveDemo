@@ -4,6 +4,8 @@ targetScope = 'subscription'
 // Input Parameters //
 // ================ //
 
+param environment string = 'dev'
+
 // RG parameters
 @description('Optional. The name of the resource group to deploy')
 param resourceGroupName string = 'validation-rg'
@@ -31,9 +33,9 @@ param roleAssignments array = []
 // Resource Group
 // module rg 'br/modules:microsoft.resources.resourcegroups:0.4.11' = {
 module rg '../BicepModulesDemo/arm/Microsoft.Resources/resourceGroups/deploy.bicep' = {
-  name: resourceGroupName
+  name: '${resourceGroupName}-${environment}'
   params: {
-    name: resourceGroupName
+    name: '${resourceGroupName}-${environment}'
     location: location
   }
 }
@@ -42,9 +44,8 @@ module rg '../BicepModulesDemo/arm/Microsoft.Resources/resourceGroups/deploy.bic
 // module kv 'br/modules:microsoft.keyvault.vaults:0.4.38' = {
 module kv '../BicepModulesDemo/arm/Microsoft.KeyVault/vaults/deploy.bicep' = {
   scope: resourceGroup(rg.name)
-  name: keyVaultName
+  name: '${keyVaultName}${environment}'
   params: {
-    name: keyVaultName
     location: location
     roleAssignments: roleAssignments
     secrets: secrets
@@ -55,9 +56,8 @@ module kv '../BicepModulesDemo/arm/Microsoft.KeyVault/vaults/deploy.bicep' = {
 // module sa 'br/modules:microsoft.storage.storageaccounts:0.4.39' = {
 module sa '../BicepModulesDemo/arm/Microsoft.Storage/storageAccounts/deploy.bicep' = {
   scope: resourceGroup(rg.name)
-  name: storageAccountName
+  name: '${storageAccountName}${environment}'
   params: {
-    name: storageAccountName
     location: location
   }
 }
