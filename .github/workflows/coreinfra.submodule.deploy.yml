@@ -40,7 +40,7 @@ jobs:
       uses: azure/arm-deploy@v1
       with:
         subscriptionId: ${{ secrets.AZURE_SUBSCRIPTION }}
-        scope: resourcegroup
+        scope: subscription
         template: '${{ env.modulePath }}/main.bicep'
         parameters: |
           '${{ env.modulePath }}/parameters/${{ env.environment }}.json'
