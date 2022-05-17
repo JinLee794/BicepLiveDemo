@@ -41,7 +41,7 @@ jobs:
         subscriptionId: ${{ secrets.AZURE_SUBSCRIPTION }}
         scope: resourcegroup
         template: '${{ env.modulePath }}/main.bicep'
-        parameters: '${{ env.modulePath }}/dev.json'
+        parameters: '${{ env.modulePath }}/parameters/dev.json'
         failOnStdErr: false
         
     - run: echo ${{ steps.deploy.outputs.containerName }}
