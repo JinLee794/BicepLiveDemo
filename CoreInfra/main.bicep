@@ -61,3 +61,7 @@ module sa '../BicepModulesDemo/arm/Microsoft.Storage/storageAccounts/deploy.bice
     location: location
   }
 }
+
+output storageAccountName string = sa.name
+output resourceGroupName string = rg.name
+output keyVaultName string = kv.name
