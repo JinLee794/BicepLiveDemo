@@ -1,46 +1,45 @@
-name: 'Deploy CoreInfra'
+# name: 'Deploy CoreInfra'
 
-on:
-  workflow_dispatch:
-    inputs:
-      removeDeployment:
-        type: boolean
-        description: 'Remove deployed module'
-        required: false
-        default: false
-  push:
-    branches:
-      - main
-    paths:
-      - '.github/workflows/coreinfra.deploy.yml'
-      - 'CoreInfra/**'
+# on:
+#   workflow_dispatch:
+#     inputs:
+#       removeDeployment:
+#         type: boolean
+#         description: 'Remove deployed module'
+#         required: false
+#         default: false
+#   push:
+#     branches:
+#       - main
+#     paths:
+#       - '.github/workflows/coreinfra.deploy.yml'
+#       - 'CoreInfra/**'
 
-env:
-  resourceGroupName: 'CoreInfraBicepLive'
-  modulePath: 'CoreInfra'
-  workflowPath: '.github/workflows/coreinfra.deploy.yml'
-jobs:
-  build-and-deploy:
-    runs-on: ubuntu-latest
-    steps:
+# env:
+#   resourceGroupName: 'CoreInfraBicepLive'
+#   modulePath: 'CoreInfra'
+#   workflowPath: '.github/workflows/coreinfra.deploy.yml'
+# jobs:
+#   build-and-deploy:
+#     runs-on: ubuntu-latest
+#     steps:
 
-      # Checkout code
-    - uses: actions/checkout@main
+#       # Checkout code
+#     - uses: actions/checkout@main
 
-    - name: Azure Login
-      uses: Azure/login@v1
-      with:
-        creds: ${{ secrets.AZURE_CREDENTIALS }}
+#     - name: Azure Login
+#       uses: Azure/login@v1
+#       with:
+#         creds: ${{ secrets.AZURE_CREDENTIALS }}
 
-
-      # Deploy Bicep file
-    - name: deploy
-      uses: azure/arm-deploy@v1
-      with:
-        subscriptionId: ${{ secrets.AZURE_SUBSCRIPTION }}
-        scope: subscription
-        template: '${{ env.modulePath }}/main.bicep'
-        parameters: '${{ env.modulePath }}/dev.json'
-        failOnStdErr: false
+#       # Deploy Bicep file
+#     - name: deploy
+#       uses: azure/arm-deploy@v1
+#       with:
+#         subscriptionId: ${{ secrets.AZURE_SUBSCRIPTION }}
+#         scope: subscription
+#         template: '${{ env.modulePath }}/main.bicep'
+#         parameters: '${{ env.modulePath }}/dev.json'
+#         failOnStdErr: false
         
-    - run: echo ${{ steps.deploy.outputs.containerName }}
+#     - run: echo ${{ steps.deploy.outputs.containerName }}
