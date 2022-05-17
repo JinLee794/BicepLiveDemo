@@ -17,6 +17,7 @@ on:
 
 env:
   environment: 'dev'
+  region: 'eastus'
   resourceGroupName: 'CoreInfraBicepLive'
   modulePath: 'CoreInfra'
   workflowPath: '.github/workflows/coreinfra.deploy.yml'
@@ -41,6 +42,7 @@ jobs:
       with:
         subscriptionId: ${{ secrets.AZURE_SUBSCRIPTION }}
         scope: subscription
+        region: ${{ env.region }}
         template: '${{ env.modulePath }}/main.bicep'
         parameters: |
           '${{ env.modulePath }}/parameters/${{ env.environment }}.json'
