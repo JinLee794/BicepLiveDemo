@@ -44,7 +44,7 @@ module rg '../BicepModulesDemo/arm/Microsoft.Resources/resourceGroups/deploy.bic
 // module kv 'br/modules:microsoft.keyvault.vaults:0.4.38' = {
 module kv '../BicepModulesDemo/arm/Microsoft.KeyVault/vaults/deploy.bicep' = {
   scope: resourceGroup(rg.name)
-  name: '${keyVaultName}${environment}'
+  name: '${environment}${keyVaultName}'
   params: {
     location: location
     roleAssignments: roleAssignments

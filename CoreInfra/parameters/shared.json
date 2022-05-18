@@ -9,7 +9,7 @@
             "value": "biceplivedemosa"
         },
         "keyVaultName": {
-            "value": "bicepLiveDemo-kv"
+            "value": "bicepLiveDemo"
         },
         "location": {
             "value": "eastus"
