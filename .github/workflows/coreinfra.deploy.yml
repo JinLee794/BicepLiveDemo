@@ -41,5 +41,6 @@ jobs:
         template: '${{ env.modulePath }}/main.bicep'
         parameters: '${{ env.modulePath }}/dev.json'
         failOnStdErr: false
+        deploymentMode: Complete
         
     - run: echo ${{ steps.deploy.outputs.containerName }}

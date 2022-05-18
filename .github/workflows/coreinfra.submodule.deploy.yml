@@ -36,12 +36,6 @@ jobs:
       with:
         creds: ${{ secrets.AZURE_CREDENTIALS }}
 
-    - name: debug
-      run: |
-        ls -al
-        ls -al BicepModulesDemo
-        ls -al CoreInfra
-
       # Deploy Bicep file
     - name: deploy
       uses: azure/arm-deploy@v1

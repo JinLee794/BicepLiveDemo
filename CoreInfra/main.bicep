@@ -46,6 +46,7 @@ module kv '../BicepModulesDemo/arm/Microsoft.KeyVault/vaults/deploy.bicep' = {
   scope: resourceGroup(rg.name)
   name: '${environment}${keyVaultName}'
   params: {
+    name: '${environment}${keyVaultName}'
     location: location
     roleAssignments: roleAssignments
     secrets: secrets
@@ -58,6 +59,7 @@ module sa '../BicepModulesDemo/arm/Microsoft.Storage/storageAccounts/deploy.bice
   scope: resourceGroup(rg.name)
   name: '${storageAccountName}${environment}'
   params: {
+    name: '${storageAccountName}${environment}'
     location: location
   }
 }
