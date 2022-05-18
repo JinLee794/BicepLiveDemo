@@ -29,7 +29,7 @@ jobs:
       # Checkout code
     - uses: actions/checkout@main
     - name: Checkout BicepModulesDemo submodule
-      run: git submodule update --init --recursive
+      run: git submodule foreach git pull origin master
 
     - name: Azure Login
       uses: Azure/login@v1
@@ -45,6 +45,6 @@ jobs:
         region: ${{ env.region }}
         template: '${{ env.modulePath }}/main.bicep'
         parameters: ${{ env.modulePath }}/parameters/${{ env.environment }}.json ${{ env.modulePath }}/parameters/shared.json
-        failOnStdErr: false
+        # failOnStdErr: false
         
-    - run: echo ${{ steps.deploy.outputs.containerName }}
+    - run: echo ${{ steps.deploy.outputs.* }}
