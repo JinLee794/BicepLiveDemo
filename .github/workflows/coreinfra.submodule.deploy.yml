@@ -49,7 +49,8 @@ jobs:
         failOnStdErr: false
         deploymentMode: Complete
         
-    - run: |
+    - name: Get Outputs
+      run: |
         echo "RG Name: ${{ steps.deploy.outputs.resourceGroupName }}"
         echo "SA Name: ${{ steps.deploy.outputs.storageAccountName }}"
         echo "KV Name: ${{ steps.deploy.outputs.keyVaultName }}"
