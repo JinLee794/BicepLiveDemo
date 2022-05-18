@@ -51,6 +51,6 @@ jobs:
         region: ${{ env.region }}
         template: '${{ env.modulePath }}/main.bicep'
         parameters: ${{ env.modulePath }}/parameters/${{ env.environment }}.json ${{ env.modulePath }}/parameters/shared.json
-        # failOnStdErr: false
+        failOnStdErr: false
         
     - run: echo ${{ steps.deploy.outputs.* }}
