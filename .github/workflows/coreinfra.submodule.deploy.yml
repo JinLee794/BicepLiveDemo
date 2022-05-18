@@ -29,12 +29,18 @@ jobs:
       # Checkout code
     - uses: actions/checkout@main
     - name: Checkout BicepModulesDemo submodule
-      run: git submodule foreach git pull origin master
+      run: git submodule update --init --recursive
 
     - name: Azure Login
       uses: Azure/login@v1
       with:
         creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+    - name: debug
+      run: |
+        ls -al
+        ls -al BicepModulesDemo
+        ls -al CoreInfra
 
       # Deploy Bicep file
     - name: deploy

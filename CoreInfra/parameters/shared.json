@@ -17,6 +17,13 @@
         
         "roleAssignments": {
             "value": [
+                {
+                    "roleDefinitionIdOrName": "Reader",
+                    "principalType": "ServicePrincipal",
+                    "principalIds": [
+                        "2ffde1bc-dac6-4395-9a2e-2411238998ff"
+                    ]
+                }
             ]
         },
         "secrets": {
