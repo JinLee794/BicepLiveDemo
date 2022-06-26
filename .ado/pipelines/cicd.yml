@@ -24,7 +24,7 @@ trigger:
 
 
 variables:
-  SolutionPath: '/CoreInfra/'
+  SolutionPath: '$(System.DefaultWorkingDirectory)/CoreInfra/'
   Location: 'eastus2'
   # vmImageName: 'ubuntu-latest'
 
