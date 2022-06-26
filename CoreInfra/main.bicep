@@ -31,8 +31,8 @@ param roleAssignments array = []
 // =========== //
 
 // Resource Group
-// module rg '../BicepModulesDemo/arm/Microsoft.Resources/resourceGroups/deploy.bicep' = {
-module rg 'br/modules:microsoft.resources.resourcegroups:0.4.11' = {
+// module rg 'br/modules:microsoft.resources.resourcegroups:0.4.11' = {
+module rg '../BicepModulesDemo/arm/Microsoft.Resources/resourceGroups/deploy.bicep' = {
   name: '${resourceGroupName}-${environment}'
   params: {
     name: '${resourceGroupName}-${environment}'
@@ -41,8 +41,8 @@ module rg 'br/modules:microsoft.resources.resourcegroups:0.4.11' = {
 }
 
 // Key vault
-// module kv '../BicepModulesDemo/arm/Microsoft.KeyVault/vaults/deploy.bicep' = {
-module kv 'br/modules:microsoft.keyvault.vaults:0.4.38' = {
+// module kv 'br/modules:microsoft.keyvault.vaults:0.4.38' = {
+module kv '../BicepModulesDemo/arm/Microsoft.KeyVault/vaults/deploy.bicep' = {
   scope: resourceGroup(rg.name)
   name: '${environment}${keyVaultName}'
   params: {
@@ -54,8 +54,8 @@ module kv 'br/modules:microsoft.keyvault.vaults:0.4.38' = {
 } 
 
 // Storage Account
-// module sa '../BicepModulesDemo/arm/Microsoft.Storage/storageAccounts/deploy.bicep' = {
-module sa 'br/modules:microsoft.storage.storageaccounts:0.4.39' = {
+// module sa 'br/modules:microsoft.storage.storageaccounts:0.4.39' = {
+module sa '../BicepModulesDemo/arm/Microsoft.Storage/storageAccounts/deploy.bicep' = {
   scope: resourceGroup(rg.name)
   name: '${storageAccountName}${environment}'
   params: {

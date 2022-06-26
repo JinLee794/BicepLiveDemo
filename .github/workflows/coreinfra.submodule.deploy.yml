@@ -8,14 +8,16 @@ on:
         description: 'Remove deployed module'
         required: false
         default: false
-  # push:
-  #   branches:
-  #     - main
-  #   paths:
-  #     - '.github/workflows/coreinfra.deploy.yml'
-  #     - 'CoreInfra/**'
+  push:
+    branches:
+      - demo/submodule
+    paths:
+      - '.github/workflows/coreinfra.submodule.deploy.yml'
+      - 'CoreInfra/**'
 
 env:
+  environment: 'dev'
+  region: 'eastus'
   resourceGroupName: 'CoreInfraBicepLive'
   modulePath: 'CoreInfra'
   workflowPath: '.github/workflows/coreinfra.deploy.yml'
@@ -26,6 +28,8 @@ jobs:
 
       # Checkout code
     - uses: actions/checkout@main
+    - name: Checkout BicepModulesDemo submodule
+      run: git submodule update --init --recursive
 
     - name: Azure Login
       uses: Azure/login@v1
@@ -33,14 +37,20 @@ jobs:
         creds: ${{ secrets.AZURE_CREDENTIALS }}
 
       # Deploy Bicep file
-    - name: deploy
+    - name: Deploy Bicep Solution
       uses: azure/arm-deploy@v1
+      id: deploy
       with:
         subscriptionId: ${{ secrets.AZURE_SUBSCRIPTION }}
         scope: subscription
+        region: ${{ env.region }}
         template: '${{ env.modulePath }}/main.bicep'
-        parameters: '${{ env.modulePath }}/dev.json'
+        parameters: ${{ env.modulePath }}/parameters/${{ env.environment }}.json ${{ env.modulePath }}/parameters/shared.json
         failOnStdErr: false
         deploymentMode: Complete
         
-    - run: echo ${{ steps.deploy.outputs.containerName }}
+    - name: Get Outputs
+      run: |
+        echo "RG Name: ${{ steps.deploy.outputs.resourceGroupName }}"
+        echo "SA Name: ${{ steps.deploy.outputs.storageAccountName }}"
+        echo "KV Name: ${{ steps.deploy.outputs.keyVaultName }}"
