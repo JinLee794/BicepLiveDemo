@@ -1,25 +1,70 @@
-trigger:
-- master
+name: CoreInfra CICD
 
-name: Deploy Bicep files
+parameters:
+  - name: removeDeployment
+    displayName: Remove deployed module
+    type: boolean
+    default: true
+  - name: prerelease
+    displayName: Publish prerelease module
+    type: boolean
+    default: false
+
+pr: none
+
+trigger:
+  branches:
+    include:
+      - main
+  paths:
+    include:
+      - '/CoreInfra/*'
+    exclude:
+      - '/**/*.md'
+
 
 variables:
-  vmImageName: 'ubuntu-latest'
+  SolutionPath: '/CoreInfra/'
+  Location: 'eastus2'
+  # vmImageName: 'ubuntu-latest'
 
-  azureServiceConnection: '<your-connection-name>'
-  resourceGroupName: 'exampleRG'
-  location: '<your-resource-group-location>'
-  templateFile: 'main.bicep'
+  # azureServiceConnection: '<your-connection-name>'
+  # resourceGroupName: 'exampleRG'
+  # location: '<your-resource-group-location>'
+  # templateFile: 'main.bicep'
 pool:
   vmImage: $(vmImageName)
 
-steps:
-- task: AzureCLI@2
-  inputs:
-    azureSubscription: $(azureServiceConnection)
-    scriptType: bash
-    scriptLocation: inlineScript
-    inlineScript: |
-      az --version
-      az group create --name $(resourceGroupName) --location $(location)
-      az deployment group create --resource-group $(resourceGroupName) --template-file $(templateFile)
+stages:
+- stage: Build
+  displayName: 'Build (CI)'
+  jobs:
+  - job: Build
+    steps:
+    - script: |
+        ls -al
+
+      displayName: "Run Build Steps"
+      workingDirectory: ${{ variables.SolutionPath }}
+    - task: AzureCLI@2
+      inputs:
+        azureSubscription: 'ES-CE-LR-INT JINLE(7386cd39-b109-4cc6-bb80-bf12413d0a99)'
+        scriptType: 'bash'
+        scriptLocation: 'inlineScript'
+        inlineScript: |
+          az deployment sub validate \
+            --name "CoreInfra-$(Build.BuildNumber)" \
+            --location ${{ variables.Location }} \
+            --template-file main.bicep \
+            --parameters ./parameters/dev.json \
+            --parameters ./parameters/shared.json
+    
+
+#   - job: Validate
+
+# - stage: Deploy
+#   displayName: 'Deploy (CD)'
+#   jobs:
+#   - job: Deploy
+#     steps:
+    
