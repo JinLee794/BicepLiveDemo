@@ -48,6 +48,7 @@ stages:
       workingDirectory: ${{ variables.SolutionPath }}
     - task: AzureCLI@2
       inputs:
+        workingDirectory: ${{ variables.SolutionPath }}
         azureSubscription: 'ES-CE-LR-INT JINLE(7386cd39-b109-4cc6-bb80-bf12413d0a99)'
         scriptType: 'bash'
         scriptLocation: 'inlineScript'
