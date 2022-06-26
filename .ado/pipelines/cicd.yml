@@ -33,7 +33,7 @@ variables:
   # location: '<your-resource-group-location>'
   # templateFile: 'main.bicep'
 pool:
-  vmImage: 'Default'
+  vmImage: 'ubuntu-22.04'
 
 stages:
 - stage: Build
