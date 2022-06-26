@@ -25,7 +25,7 @@ trigger:
 
 variables:
   SolutionPath: '$(System.DefaultWorkingDirectory)/CoreInfra/'
-  Location: 'eastus2'
+  Location: 'eastus'
   # vmImageName: 'ubuntu-latest'
 
   # azureServiceConnection: '<your-connection-name>'
