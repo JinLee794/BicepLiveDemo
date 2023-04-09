@@ -48,7 +48,7 @@ jobs:
         scope: ${{ env.scope }}
         region: ${{ env.region }}
         template: ${{ env.solutionPath }}
-        parameters: ${{ env.solutionDeploymentParamsPath }} environment=stg
+        parameters: ${{ env.solutionDeploymentParamsPath }} environment=stg location=${{ env.region }}
         deploymentMode: Validate
         additionalArguments: "--what-if --rollback-on-error --what-if-exclude-change-types Create Ignore"
 
@@ -76,7 +76,7 @@ jobs:
         scope: ${{ env.scope }}
         region: ${{ env.region }}
         template: 'main.bicep'
-        parameters: ${{ env.solutionDeploymentParamsPath }} environment=stg
+        parameters: ${{ env.solutionDeploymentParamsPath }} environment=stg location=${{ env.region }}
         failOnStdErr: false
         deploymentMode: Complete
         

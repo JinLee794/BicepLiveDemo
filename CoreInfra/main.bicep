@@ -51,8 +51,8 @@ param secrets object = {}
 @description('Optional. Predefined role assignment')
 param roleAssignments array = []
 
-param devopsResourceGroupName string
-param devopsKeyVaultName string
+// param devopsResourceGroupName string
+// param devopsKeyVaultName string
 
 var tags = {
   deploymentTemplate: 'BicepLiveDemo/coreInfra'
@@ -61,7 +61,7 @@ var tags = {
   owner: owner
 }
 
-var resourceGroupName = '${name}-${deployment().location}-rg'
+var resourceGroupName = '${name}-${location}-rg'
 var keyVaultName = toLower('kv${name}')
 var storageAccountName = toLower('sa${name}')
 
@@ -106,7 +106,6 @@ module kv 'br/modules:microsoft.keyvault.vaults:0.5' = {
     name: keyVaultName
     location: location
     roleAssignments: roleAssignments
-    secrets: secrets
   }
 } 
 
