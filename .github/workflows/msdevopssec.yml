@@ -1,13 +1,14 @@
 name: MSDO windows-latest
 on:
-  # push:
-  #   branches: [ main ]
+  push:
+    branches: [ main ]
+
   pull_request:
     branches: [ main ]
   workflow_dispatch:
 
 jobs:
-  sample:
+  msdo-iac:
 
     # MSDO runs on windows-latest and ubuntu-latest.
     # macos-latest supporting coming soon
@@ -27,9 +28,12 @@ jobs:
       uses: microsoft/security-devops-action@main
       id: msdo
       with:
-        tools: template-analyzer
+        tools: templateanalyzer
         policy: GitHub
         categories: IaC,secrets,code,artifacts
+      env:
+        GDN_TEMPLATEANALYZER_ANALYZEDIRECTORY: ${{ github.workspace }}
+        GDN_TEMPLATEANALYZER_VERBOSE: true
 
     # Upload alerts to the Security tab
     - name: Upload alerts to Security tab
