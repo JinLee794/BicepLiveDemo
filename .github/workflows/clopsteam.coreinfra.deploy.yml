@@ -21,6 +21,10 @@ env:
   solutionPath: 'CoreInfra'
   solutionDeploymentParamsPath: 'parameters/clopsTeam.json'
   workflowPath: '.github/workflows/clopsteam.coreinfra.deploy.yml'
+
+permissions:
+  id-token: write
+  contents: read
   
 jobs:
   job_static_validation:
