@@ -68,10 +68,10 @@ var storageAccountName = toLower('sa${name}')
 // =========== //
 // Data Lookup //
 // =========== //
-resource keyVault 'Microsoft.KeyVault/vaults@2019-09-01' existing = {
-  name: devopsKeyVaultName
-  scope: resourceGroup(devopsResourceGroupName)
-}
+// resource keyVault 'Microsoft.KeyVault/vaults@2019-09-01' existing = {
+//   name: devopsKeyVaultName
+//   scope: resourceGroup(devopsResourceGroupName)
+// }
 
 // =========== //
 // Deployments //
