@@ -25,11 +25,11 @@ env:
 jobs:
   job_static_validation:
     name: 'Preflight Validation'
+    runs-on: ubuntu-20.04
     environment: stg
     defaults:
       run:
         working-directory: ${{ env.solutionPath }}
-    runs-on: ubuntu-latest
     steps:
       # Checkout code
     - uses: actions/checkout@v3
@@ -50,11 +50,13 @@ jobs:
         additionalArguments: "--what-if --rollback-on-error --what-if-exclude-change-types Create Ignore"
 
   job_deploy_to_staging:
+    needs:
+    - job_static_validation
     defaults:
       run:
         working-directory: ${{ env.solutionPath }}
     environment: stg
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     name: 'Deploy to Staging for Validation'
     steps:
 
