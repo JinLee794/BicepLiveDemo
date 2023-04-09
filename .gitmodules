@@ -1,6 +1,0 @@
-[submodule "CoreInfra/BicepModulesDemo"]
-	path = CoreInfra/BicepModulesDemo
-	url = https://github.com/JinLee794/BicepModulesDemo
-[submodule "BicepModulesDemo"]
-	path = BicepModulesDemo
-	url = https://github.com/JinLee794/BicepModulesDemo

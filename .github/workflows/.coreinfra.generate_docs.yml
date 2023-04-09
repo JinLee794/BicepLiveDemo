@@ -1,0 +1,28 @@
+name: Publish CoreInfra docs
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - 'CoreInfra/*.bicep'
+env:
+  inputPath: CoreInfra/
+  outputPath: CoreInfra/
+jobs:
+  publish:
+    name: Publish
+    runs-on: ubuntu-latest
+    steps:
+
+    - uses: actions/checkout@v2
+
+    # Generate markdown files using PSDocs
+    # Scan for Azure template file recursively in sub-directories
+    # Then generate a docs using a standard naming convention. i.e. <name>_<version>.md
+    - name: Generate docs
+      uses: microsoft/ps-docs@main
+      with:
+        conventions: Azure.NameByParentPath
+        modules: PSDocs,PSDocs.Azure
+        inputPath: ${{ env.inputPath }}
+        outputPath: ${{ env.outputPath }}
+        prerelease: true
