@@ -7,12 +7,16 @@ on:
     branches: [ main ]
   workflow_dispatch:
 
+permissions:
+  id-token: write
+  contents: read
+
 jobs:
   msdo-iac:
-
     # MSDO runs on windows-latest and ubuntu-latest.
     # macos-latest supporting coming soon
     runs-on: windows-latest
+    environment: msdo
 
     steps:
     - uses: actions/checkout@v3
@@ -28,6 +32,7 @@ jobs:
         client-id: ${{ secrets.ARM_CLIENT_ID }}
         tenant-id: ${{ secrets.ARM_TENANT_ID }}
         subscription-id: ${{ secrets.ARM_SUBSCRIPTION_ID }}
+
     # Run analyzers
     - name: Run Microsoft Security DevOps Analysis
       uses: microsoft/security-devops-action@main
