@@ -19,8 +19,8 @@ env:
   scope: 'subscription'
   region: 'eastus2'
   resourceGroupName: 'CoreInfraBicepLive'
-  solutionPath: 'CoreInfra'
-  solutionDeploymentParamsPath: 'parameters/clopsTeam.json'
+  solutionPath: 'CoreInfra/main.bicep'
+  solutionDeploymentParamsPath: 'CoreInfra/parameters/clopsTeam.json'
   workflowPath: '.github/workflows/clopsteam.coreinfra.deploy.yml'
 
 permissions:
@@ -32,9 +32,6 @@ jobs:
     name: 'Preflight Validation'
     runs-on: ubuntu-20.04
     environment: stg
-    defaults:
-      run:
-        working-directory: ${{ env.solutionPath }}
     steps:
       # Checkout code
     - uses: actions/checkout@v3
@@ -50,7 +47,7 @@ jobs:
         subscriptionId: ${{ secrets.ARM_SUBSCRIPTION_ID }}
         scope: ${{ env.scope }}
         region: ${{ env.region }}
-        template: 'main.bicep'
+        template: ${{ env.solutionPath }}
         parameters: ${{ env.solutionDeploymentParamsPath }} environment=stg
         deploymentMode: Validate
         additionalArguments: "--what-if --rollback-on-error --what-if-exclude-change-types Create Ignore"
@@ -58,9 +55,6 @@ jobs:
   job_deploy_to_staging:
     needs:
     - job_static_validation
-    defaults:
-      run:
-        working-directory: ${{ env.solutionPath }}
     environment: stg
     runs-on: ubuntu-20.04
     name: 'Deploy to Staging for Validation'
