@@ -37,8 +37,6 @@ jobs:
     - name: Run Microsoft Security DevOps Analysis
       uses: microsoft/security-devops-action@v1.6.0
       id: msdo
-      env:
-        GDN_TEMPLATEANALYZER_VERBOSE: true
 
     # Upload alerts to the Security tab
     - name: Upload alerts to Security tab
