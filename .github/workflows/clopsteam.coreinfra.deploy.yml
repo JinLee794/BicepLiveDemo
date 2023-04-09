@@ -8,18 +8,18 @@ on:
         description: 'Remove the deployment instead of deploying it'
         required: false
         default: false
-  # push:
-  #   branches:
-  #     - main
-  #   paths:
-  #     - '.github/workflows/coreinfra.deploy.yml'
-  #     - 'CoreInfra/**'
+  push:
+    branches:
+      - main
+    paths:
+      - '.github/workflows/clopsteam.coreinfra.deploy.yml'
+      - 'CoreInfra/main.bicep'
 
 env:
   scope: 'subscription'
   region: 'eastus2'
   resourceGroupName: 'CoreInfraBicepLive'
-  solutionPath: 'CoreInfra/main.bicep'
+  solutionPath: 'CoreInfra'
   solutionDeploymentParamsPath: 'CoreInfra/parameters/clopsTeam.json'
   workflowPath: '.github/workflows/clopsteam.coreinfra.deploy.yml'
 
@@ -41,16 +41,27 @@ jobs:
         tenant-id: ${{ secrets.ARM_TENANT_ID }}
         subscription-id: ${{ secrets.ARM_SUBSCRIPTION_ID }}
 
+    # Run analysis by using the PSRule GitHub action.
+    - name: Run PSRule analysis
+      uses: microsoft/ps-rule@v2.4.0
+      continue-on-error: true # Setting this whilst PSRule gets bedded in, in this project
+      with:
+        modules: 'PSRule.Rules.Azure'
+        inputPath: ${{ env.solutionPath }}
+        outputFormat: Csv
+        outputPath: '${{ env.solutionPath }}-PSRule-output.csv'
+
     - uses: azure/arm-deploy@v1
       name: Run preflight validation
       with:
         subscriptionId: ${{ secrets.ARM_SUBSCRIPTION_ID }}
         scope: ${{ env.scope }}
         region: ${{ env.region }}
-        template: ${{ env.solutionPath }}
+        template: ${{ env.solutionPath }}/main.bicep
         parameters: ${{ env.solutionDeploymentParamsPath }} environment=stg location=${{ env.region }}
         deploymentMode: Validate
         additionalArguments: "--what-if --rollback-on-error --what-if-exclude-change-types Create Ignore"
+
 
   job_deploy_to_staging:
     needs:
@@ -75,7 +86,7 @@ jobs:
         subscriptionId: ${{ secrets.AZURE_SUBSCRIPTION }}
         scope: ${{ env.scope }}
         region: ${{ env.region }}
-        template: 'main.bicep'
+        template: ${{ env.solutionPath }}/main.bicep
         parameters: ${{ env.solutionDeploymentParamsPath }} environment=stg location=${{ env.region }}
         failOnStdErr: false
         deploymentMode: Complete
