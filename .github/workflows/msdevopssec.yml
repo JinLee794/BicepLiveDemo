@@ -38,7 +38,6 @@ jobs:
       uses: microsoft/security-devops-action@main
       id: msdo
       with:
-        tools: templateanalyzer
         policy: GitHub
         categories: IaC,secrets,code,artifacts
       env:
