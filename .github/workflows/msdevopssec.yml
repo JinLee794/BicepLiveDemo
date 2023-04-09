@@ -26,6 +26,10 @@ jobs:
     - name: Run Microsoft Security DevOps Analysis
       uses: microsoft/security-devops-action@main
       id: msdo
+      with:
+        tools: template-analyzer
+        policy: GitHub
+        categories: IaC,secrets,code,artifacts
 
     # Upload alerts to the Security tab
     - name: Upload alerts to Security tab
