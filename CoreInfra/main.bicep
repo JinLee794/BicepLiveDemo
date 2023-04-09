@@ -83,7 +83,7 @@ var storageAccountName = toLower('sa${name}')
 
 // Resource Group
 @description('Core Infra Resource Group')
-module rg 'br/modules:microsoft.resources.resourcegroups:0.5' = {
+module coreRG 'br/modules:microsoft.resources.resourcegroups:0.5' = {
   name: resourceGroupName
   params: {
     name: resourceGroupName
@@ -99,8 +99,8 @@ module rg 'br/modules:microsoft.resources.resourcegroups:0.5' = {
 
 // Key vault
 @description('Core Infra Key Vault')
-module kv 'br/modules:microsoft.keyvault.vaults:0.5' = {
-  scope: resourceGroup(rg.name)
+module coreKV 'br/modules:microsoft.keyvault.vaults:0.5' = {
+  scope: resourceGroup(coreRG.name)
   name: '${environment}${keyVaultName}'
   params: {
     name: keyVaultName
@@ -111,8 +111,8 @@ module kv 'br/modules:microsoft.keyvault.vaults:0.5' = {
 
 // Storage Account
 @description('Core Infra Storage Account')
-module sa 'br/modules:microsoft.storage.storageaccounts:0.5' = {
-  scope: resourceGroup(rg.name)
+module coreSA 'br/modules:microsoft.storage.storageaccounts:0.5' = {
+  scope: resourceGroup(coreRG.name)
   name: storageAccountName
   params: {
     name: storageAccountName
@@ -120,6 +120,6 @@ module sa 'br/modules:microsoft.storage.storageaccounts:0.5' = {
   }
 }
 
-output storageAccountName string = sa.name
-output resourceGroupName string = rg.name
-output keyVaultName string = kv.name
+output storageAccountName string = coreSA.name
+output resourceGroupName string = coreRG.name
+output keyVaultName string = coreKV.name
