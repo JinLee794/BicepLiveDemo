@@ -1,0 +1,52 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+      "name": {
+        "value": "demoCC"
+      },
+      "costCenter": {
+        "value": "demoCC"
+      },
+      "location": {
+        "value": "eastus2"
+      },
+      "owner": {
+        "value": "demoteam@contoso.com"
+      },
+      "roleAssignments": {
+        "value":
+        [
+          {
+            "roleDefinitionIdOrName": "Contributor",
+            "description": "Contributor access to resource group",
+            "principalIds": [
+              "92c232f7-62e4-4b17-a155-24cf4d8392db"
+            ]
+          },
+          {
+            "roleDefinitionIdOrName": "Reader",
+            "description": "Reader access to resource group",
+            "principalIds": [
+              "92c232f7-62e4-4b17-a155-24cf4d8392db"
+            ]
+          }
+        ]
+      },
+      "secrets": {
+        "value": {
+            "secureList": [
+                {
+                    "name": "secretName",
+                    "value": "secretValue",
+                    "contentType": "Something",
+                    "attributesExp": 1702648632,
+                    "attributesNbf": 10000,
+                    "roleAssignments": [
+                    ]
+                }
+            ]
+        }
+      }
+    }
+  }
