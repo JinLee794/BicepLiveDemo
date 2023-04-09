@@ -35,10 +35,9 @@ jobs:
 
     # Run analyzers
     - name: Run Microsoft Security DevOps Analysis
-      uses: microsoft/security-devops-action@main
+      uses: microsoft/security-devops-action@v1.6.0
       id: msdo
       env:
-        GDN_TEMPLATEANALYZER_ANALYZEDIRECTORY: ./
         GDN_TEMPLATEANALYZER_VERBOSE: true
 
     # Upload alerts to the Security tab
@@ -46,3 +45,10 @@ jobs:
       uses: github/codeql-action/upload-sarif@v2
       with:
         sarif_file: ${{ steps.msdo.outputs.sarifFile }}
+
+    # Upload alerts file as a workflow artifact
+    - name: Upload alerts file as a workflow artifact
+      uses: actions/upload-artifact@v3
+      with:
+        name: alerts
+        path: ${{ steps.msdo.outputs.sarifFile }}
