@@ -2,15 +2,29 @@
     "moduleAliases": {
         "br": {
             "modules": {
-                "registry": "bicepsandboxmodules.azurecr.io",
+                "registry": "bicepdemoacr001.azurecr.io",
                 "modulePath": "bicep/modules"
+            }
+        },
+        "ts": {
+            "modules": {
+                "subscription": "22e39941-34af-48d2-8d93-3e35f5d796a9",
+                "resourceGroup": "BicepModules"
             }
         }
     },
     "cloud": {
+        "currentProfile": "AzureCloud",
+        "profiles": {
+            "AzureCloud": {
+                "resourceManagerEndpoint": "https://management.azure.com",
+                "activeDirectoryAuthority": "https://login.microsoftonline.com"
+            }
+        },
         "credentialPrecedence": [
             "AzureCLI",
-            "AzurePowerShell"
+            "AzurePowerShell",
+            "VisualStudioCode"
         ]
     }
 }

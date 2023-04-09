@@ -1,0 +1,28 @@
+name: 'Execute PSRule module tests'
+description: 'Execute PSRule module tests (if any)'
+
+inputs:
+  templateFilePath:
+    description: 'The path to the test file'
+    required: true
+    default: ''
+  subscriptionId:
+    description: 'The subscription ID to deploy to'
+    required: false
+  managementGroupId:
+    description: 'The management group ID to deploy to'
+    required: false
+
+
+runs:
+  using: 'composite'
+  steps:
+    # Run analysis by using the PSRule GitHub action.
+    - name: Run PSRule analysis
+      uses: microsoft/ps-rule@v2.8.1
+      continue-on-error: true # Setting this whilst PSRule gets bedded in, in this project
+      with:
+        modules: 'PSRule.Rules.Azure'
+        inputPath: '${{ inputs.templateFilePath}}'
+        outputFormat: Csv
+        outputPath: '${{ inputs.templateFilePath}}-PSRule-output.csv'
