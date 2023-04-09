@@ -98,7 +98,7 @@ module rg 'br/modules:microsoft.resources.resourcegroups:0.5' = {
 }
 
 // Key vault
-@description('Core Infra Key Vault')  
+@description('Core Infra Key Vault')
 module kv 'br/modules:microsoft.keyvault.vaults:0.5' = {
   scope: resourceGroup(rg.name)
   name: '${environment}${keyVaultName}'
@@ -107,7 +107,7 @@ module kv 'br/modules:microsoft.keyvault.vaults:0.5' = {
     location: location
     roleAssignments: roleAssignments
   }
-} 
+}
 
 // Storage Account
 @description('Core Infra Storage Account')

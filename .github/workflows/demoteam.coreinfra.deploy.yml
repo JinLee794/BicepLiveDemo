@@ -19,7 +19,7 @@ env:
   resourceGroupName: 'CoreInfraBicepLive'
   modulePath: 'CoreInfra'
   workflowPath: '.github/workflows/coreinfra.deploy.yml'
-  
+
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
@@ -43,5 +43,5 @@ jobs:
         parameters: '${{ env.modulePath }}/dev.json'
         failOnStdErr: false
         deploymentMode: Complete
-        
+
     - run: echo ${{ steps.deploy.outputs }}
