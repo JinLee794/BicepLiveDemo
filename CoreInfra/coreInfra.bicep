@@ -124,7 +124,7 @@ module coreKV 'br/modules:microsoft.keyvault.vaults:0.5' = {
     location: location
     roleAssignments: roleAssignments
     diagnosticStorageAccountId: coreSA.outputs.resourceId
-    diagnosticLogCategoriesToEnable: ['AuditEvent']
+    diagnosticLogCategoriesToEnable: ['allLogs']
 
     tags: union(tags, {
       moduleSource: 'br/modules:microsoft.keyvault.vaults'
