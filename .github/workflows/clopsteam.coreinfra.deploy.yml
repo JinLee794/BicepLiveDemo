@@ -55,7 +55,7 @@ jobs:
       with:
         modules: 'PSRule.Rules.Azure'
         # inputType: repository
-        inputPath: ${{ env.solutionPath }}
+        inputPath: ${{ env.solutionPath }}/parameters
         outputFormat: Csv
         outputPath: '${{ env.solutionPath }}-PSRule-output.csv'
       env:
