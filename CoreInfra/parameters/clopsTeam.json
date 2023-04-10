@@ -14,12 +14,6 @@
       "owner": {
         "value": "cloudops@contoso.com"
       },
-      "devopsKeyVaultName": {
-        "value": "bootstrapkvtf2"
-      },
-      "devopsKeyVaultResourceGroup": {
-        "value": "validation-rg"
-      },
       "roleAssignments": {
         "value":
         [
