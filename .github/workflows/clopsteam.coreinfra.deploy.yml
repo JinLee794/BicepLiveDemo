@@ -48,13 +48,15 @@ jobs:
       continue-on-error: true # Setting this whilst PSRule gets bedded in, in this project
       with:
         modules: 'PSRule.Rules.Azure'
-        inputPath: ${{ env.solutionPath }}
+        # inputPath: ${{ env.solutionPath }}
+        option: '${{ env.GITHUB_WORKSPACE }}/.ps-rule/ps-rule.yml'
         outputFormat: Csv
         outputPath: '${{ env.solutionPath }}-PSRule-output.csv'
       env:
         PSRULE_CONFIGURATION_AZURE_BICEP_FILE_EXPANSION: true
         PSRULE_OUTPUT_FORMAT: Yaml
         PSRULE_AZURE_BICEP_USE_AZURE_CLI: true
+
     - name: 'Parse CSV content'
       if: always()
       uses: azure/powershell@v1
