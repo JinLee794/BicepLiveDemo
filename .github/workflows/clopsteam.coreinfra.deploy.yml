@@ -51,10 +51,6 @@ jobs:
         inputPath: ${{ env.solutionPath }}
         outputFormat: Csv
         outputPath: '${{ env.solutionPath }}-PSRule-output.csv'
-      env:
-        AZURE_CLIENT_ID: ${{ secrets.ARM_CLIENT_ID }}
-        AZURE_TENANT_ID: ${{ secrets.ARM_TENANT_ID }}
-        AZURE_SUBSCRIPTION_ID: ${{ secrets.ARM_SUBSCRIPTION_ID }}
 
     - name: 'Parse CSV content'
       if: always()
