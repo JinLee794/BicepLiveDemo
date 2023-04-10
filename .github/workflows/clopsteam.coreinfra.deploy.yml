@@ -51,7 +51,10 @@ jobs:
         inputPath: ${{ env.solutionPath }}
         outputFormat: Csv
         outputPath: '${{ env.solutionPath }}-PSRule-output.csv'
-
+      env:
+        PSRULE_CONFIGURATION_AZURE_BICEP_FILE_EXPANSION: true
+        PSRULE_OUTPUT_FORMAT: Yaml
+        PSRULE_AZURE_BICEP_USE_AZURE_CLI: true
     - name: 'Parse CSV content'
       if: always()
       uses: azure/powershell@v1
