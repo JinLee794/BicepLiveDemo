@@ -21,7 +21,7 @@ env:
   region: 'eastus2'
   resourceGroupName: 'CoreInfraBicepLive'
   solutionPath: 'CoreInfra'
-  solutionDeploymentParamsPath: 'CoreInfra/parameters/clopsTeam.json'
+  solutionDeploymentParamsPath: 'CoreInfra/parameters/clopsteam.parameters.json'
   workflowPath: '.github/workflows/clopsteam.coreinfra.deploy.yml'
 
 permissions:
@@ -46,7 +46,7 @@ jobs:
       run: |
         curl -Lo bicep https://github.com/Azure/bicep/releases/latest/download/bicep-linux-x64
         chmod +x ./bicep
-        cp
+        cp ${{ env.solutionDeploymentParamsPath }} ${{ env.solutionPath }}/coreInfra.parameters.json
 
     # Run analysis by using the PSRule GitHub action.
     - name: Run PSRule analysis
@@ -60,7 +60,6 @@ jobs:
         outputFormat: Csv
         outputPath: '${{ env.solutionPath }}-PSRule-output.csv'
       env:
-        PSRULE_CONFIGURATION_AZURE_BICEP_FILE_EXPANSION: true
         PSRULE_OUTPUT_FORMAT: Yaml
         PSRULE_AZURE_BICEP_USE_AZURE_CLI: true
         PSRULE_AZURE_BICEP_PATH: './bicep'
