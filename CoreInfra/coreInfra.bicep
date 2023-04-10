@@ -97,6 +97,23 @@ module coreRG 'br/modules:microsoft.resources.resourcegroups:0.5' = {
   }
 }
 
+@description ('Core Infra VNET')
+module coreVNet 'br/modules:microsoft.network.virtualnetworks:0.4' = {
+  scope: resourceGroup(coreRG.name)
+  name: 'vnet'
+  params: {
+    name: 'vnet'
+    location: location
+    addressPrefixes: [
+      '10.10.0.0/16'
+    ]
+    tags: union(tags, {
+      moduleSource: 'br/modules:microsoft.network.virtualnetworks'
+      moduleVersion: '0.4'
+    })
+  }
+}
+
 // Key vault
 @description('Core Infra Key Vault')
 module coreKV 'br/modules:microsoft.keyvault.vaults:0.5' = {
@@ -106,6 +123,13 @@ module coreKV 'br/modules:microsoft.keyvault.vaults:0.5' = {
     name: keyVaultName
     location: location
     roleAssignments: roleAssignments
+    diagnosticStorageAccountId: coreSA.outputs.resourceId
+    diagnosticLogCategoriesToEnable: ['AuditEvent']
+
+    tags: union(tags, {
+      moduleSource: 'br/modules:microsoft.keyvault.vaults'
+      moduleVersion: '0.5'
+    })
   }
 }
 
@@ -117,6 +141,11 @@ module coreSA 'br/modules:microsoft.storage.storageaccounts:0.5' = {
   params: {
     name: storageAccountName
     location: location
+
+    tags: union(tags, {
+      moduleSource: 'br/modules:microsoft.storage.storageaccounts'
+      moduleVersion: '0.5'
+    })
   }
 }
 
