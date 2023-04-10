@@ -42,6 +42,11 @@ jobs:
         tenant-id: ${{ secrets.ARM_TENANT_ID }}
         subscription-id: ${{ secrets.ARM_SUBSCRIPTION_ID }}
 
+    - name: 'Install Bicep CLI'
+      run: |
+        curl -Lo bicep https://github.com/Azure/bicep/releases/latest/download/bicep-linux-x64
+        chmod +x ./bicep
+
     # Run analysis by using the PSRule GitHub action.
     - name: Run PSRule analysis
       uses: microsoft/ps-rule@v2.4.0
@@ -56,6 +61,7 @@ jobs:
         PSRULE_CONFIGURATION_AZURE_BICEP_FILE_EXPANSION: true
         PSRULE_OUTPUT_FORMAT: Yaml
         PSRULE_AZURE_BICEP_USE_AZURE_CLI: true
+        PSRULE_AZURE_BICEP_PATH: './bicep'
 
     - name: 'Parse CSV content'
       if: always()
