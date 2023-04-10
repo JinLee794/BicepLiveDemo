@@ -13,8 +13,8 @@ on:
       - main
     paths:
       - '.github/workflows/clopsteam.coreinfra.deploy.yml'
-      - 'CoreInfra/main.bicep'
-      - 'CoreInfra/parameters/clopsTeam.json'
+      - 'CoreInfra/coreInfra.bicep'
+      - 'CoreInfra/parameters/clopsteam.parameters.json'
 
 env:
   scope: 'subscription'
@@ -46,6 +46,7 @@ jobs:
       run: |
         curl -Lo bicep https://github.com/Azure/bicep/releases/latest/download/bicep-linux-x64
         chmod +x ./bicep
+        cp
 
     # Run analysis by using the PSRule GitHub action.
     - name: Run PSRule analysis
@@ -54,6 +55,7 @@ jobs:
       with:
         modules: 'PSRule.Rules.Azure'
         # inputType: repository
+        inputType: path
         inputPath: ${{ env.solutionPath }}
         outputFormat: Csv
         outputPath: '${{ env.solutionPath }}-PSRule-output.csv'
