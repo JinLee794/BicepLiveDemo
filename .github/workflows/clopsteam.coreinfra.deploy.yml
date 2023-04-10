@@ -48,8 +48,8 @@ jobs:
       continue-on-error: true # Setting this whilst PSRule gets bedded in, in this project
       with:
         modules: 'PSRule.Rules.Azure'
+        inputType: repository
         # inputPath: ${{ env.solutionPath }}
-        option: '${{ env.GITHUB_WORKSPACE }}/.ps-rule/ps-rule.yml'
         outputFormat: Csv
         outputPath: '${{ env.solutionPath }}-PSRule-output.csv'
       env:

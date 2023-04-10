@@ -34,7 +34,7 @@ output:
 input:
   pathIgnore:
     # Ignore other files in the repository.
-    - '**/*'
+    # - '**/*'
     # Do not ignore tests.
     - '!modules/**/*.test.bicep'
 
