@@ -31,13 +31,6 @@ output:
   culture:
     - 'en-US'
 
-input:
-  pathIgnore:
-    # Ignore other files in the repository.
-    # - '**/*'
-    # Do not ignore tests.
-    - '!modules/**/*.test.bicep'
-
 configuration:
   # Enable automatic expansion of Azure parameter files.
   AZURE_PARAMETER_FILE_EXPANSION: true
@@ -53,4 +46,4 @@ rule:
   includeLocal: false
   exclude:
   # Ignore the following rules for all resources
-   - Azure.KeyVault.PurgeProtect
+    - Azure.KeyVault.PurgeProtect

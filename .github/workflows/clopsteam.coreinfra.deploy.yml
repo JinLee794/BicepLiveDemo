@@ -54,8 +54,8 @@ jobs:
       continue-on-error: true # Setting this whilst PSRule gets bedded in, in this project
       with:
         modules: 'PSRule.Rules.Azure'
-        # inputType: repository
-        inputPath: ${{ env.solutionPath }}/parameters
+        inputType: repository
+        inputPath: ${{ env.solutionDeploymentParamsPath }}
         outputFormat: Csv
         outputPath: '${{ env.solutionPath }}-PSRule-output.csv'
       env:
@@ -114,7 +114,7 @@ jobs:
         subscriptionId: ${{ secrets.ARM_SUBSCRIPTION_ID }}
         scope: ${{ env.scope }}
         region: ${{ env.region }}
-        template: ${{ env.solutionPath }}/main.bicep
+        template: ${{ env.solutionPath }}/coreInfra.bicep
         parameters: ${{ env.solutionDeploymentParamsPath }} environment=stg location=${{ env.region }}
         deploymentMode: Validate
         additionalArguments: "--what-if --rollback-on-error --what-if-exclude-change-types Create Ignore"
