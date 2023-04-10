@@ -48,10 +48,54 @@ jobs:
       continue-on-error: true # Setting this whilst PSRule gets bedded in, in this project
       with:
         modules: 'PSRule.Rules.Azure'
-        # inputPath: ${{ env.solutionPath }}
-        inputType: repository
+        inputPath: ${{ env.solutionPath }}
         outputFormat: Csv
         outputPath: '${{ env.solutionPath }}-PSRule-output.csv'
+
+    - name: 'Parse CSV content'
+      if: always()
+      uses: azure/powershell@v1
+      with:
+        azPSVersion: 'latest'
+        inlineScript: |
+          # Grouping task logs
+          Write-Output '::group::Parse CSV content'
+
+          # Load used functions
+          . (Join-Path $env:GITHUB_WORKSPACE 'utilities' 'pipelines' 'PSRuleValidation' 'Set-PSRuleGitHubOutput.ps1')
+
+          # Populate parameter input
+          $ParameterInput = @{
+            inputFilePath           = '${{ env.solutionPath }}-PSRule-output.csv'
+            outputFilePath          = '${{ env.solutionPath }}-PSRule-output.md'
+            skipPassedRulesReport   = $false
+          }
+
+          Write-Verbose ('Set PS Rule Output with following parameters:`n{0}' -f (ConvertTo-Json $ParameterInput -Depth 10)) -Verbose
+
+          # Invoke Set PSRule Output Functionality
+          $null = Set-PSRuleGitHubOutput @ParameterInput
+
+          Write-Output '::endgroup::'
+
+    - name: 'Output to GitHub job summaries'
+      if: always()
+      shell: pwsh
+      run: |
+        # Grouping task logs
+        Write-Output '::group::Output to GitHub job summaries'
+
+        $mdPSRuleOutputFilePath = Join-Path $env:GITHUB_WORKSPACE '${{ env.solutionPath }}-PSRule-output.md'
+
+        if (-not (Test-Path $mdPSRuleOutputFilePath)) {
+          Write-Warning ('Input file [{0}] not found. Please check if the previous task threw an error and try again.' -f $mdPSRuleOutputFilePath)
+          return ''
+        } else {
+          Get-Content $mdPSRuleOutputFilePath >> $env:GITHUB_STEP_SUMMARY
+          Write-Verbose ('Successfully printed out file [{0}] to Job Summaries' -f $mdPSRuleOutputFilePath) -Verbose
+        }
+
+        Write-Output '::endgroup::'
 
     - uses: azure/arm-deploy@v1
       name: Run preflight validation
