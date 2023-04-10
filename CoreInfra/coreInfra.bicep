@@ -20,7 +20,7 @@ targetScope = 'subscription'
 
 // Tagging & Naming Parameters
 @description('Required. The environment to deploy into (dev, test, prod, etc.)')
-param environment string
+param environment string = 'dev'
 
 @description('Required. The cost center to deploy into (e.g. 1234)')
 param costCenter string
