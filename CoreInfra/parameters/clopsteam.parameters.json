@@ -35,21 +35,6 @@
             ]
           }
         ]
-      },
-      "secrets": {
-        "value": {
-            "secureList": [
-                {
-                    "name": "secretName",
-                    "value": "secretValue",
-                    "contentType": "Something",
-                    "attributesExp": 1702648632,
-                    "attributesNbf": 10000,
-                    "roleAssignments": [
-                    ]
-                }
-            ]
-        }
       }
     }
   }
