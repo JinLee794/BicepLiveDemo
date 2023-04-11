@@ -46,7 +46,18 @@ jobs:
       run: |
         curl -Lo bicep https://github.com/Azure/bicep/releases/latest/download/bicep-linux-x64
         chmod +x ./bicep
-        cp ${{ env.solutionDeploymentParamsPath }} ${{ env.solutionPath }}/coreInfra.parameters.json
+        # cp ${{ env.solutionDeploymentParamsPath }} ${{ env.solutionPath }}/coreInfra.parameters.json
+
+    - uses: azure/arm-deploy@v1
+      name: Validate Bicep
+      with:
+        subscriptionId: ${{ secrets.ARM_SUBSCRIPTION_ID }}
+        scope: ${{ env.scope }}
+        region: ${{ env.region }}
+        template: ${{ env.solutionPath }}/coreInfra.bicep
+        parameters: >
+          ${{ env.solutionDeploymentParamsPath }} environment=stg location=${{ env.region }}
+        deploymentMode: Validate
 
     # Run analysis by using the PSRule GitHub action.
     - name: Run PSRule analysis
@@ -63,7 +74,7 @@ jobs:
         PSRULE_AZURE_BICEP_USE_AZURE_CLI: true
         PSRULE_AZURE_BICEP_PATH: './bicep'
 
-    - name: 'Parse CSV content'
+    - name: Parse CSV content
       if: always()
       uses: azure/powershell@v1
       with:
@@ -89,7 +100,7 @@ jobs:
 
           Write-Output '::endgroup::'
 
-    - name: 'Output to GitHub job summaries'
+    - name: Output to GitHub job summaries
       if: always()
       shell: pwsh
       run: |
@@ -108,21 +119,38 @@ jobs:
 
         Write-Output '::endgroup::'
 
+  job_preview:
+    needs:
+    - job_static_validation
+    environment: stg
+    runs-on: ubuntu-20.04
+    name: 'Deploy to Staging for Preview'
+    steps:
+
+    # Checkout code
+    - uses: actions/checkout@v3
+    - uses: azure/login@v1
+      with:
+        client-id: ${{ secrets.ARM_CLIENT_ID }}
+        tenant-id: ${{ secrets.ARM_TENANT_ID }}
+        subscription-id: ${{ secrets.ARM_SUBSCRIPTION_ID }}
+
     - uses: azure/arm-deploy@v1
-      name: Run preflight validation
+      name: Run What-If
       with:
         subscriptionId: ${{ secrets.ARM_SUBSCRIPTION_ID }}
         scope: ${{ env.scope }}
         region: ${{ env.region }}
         template: ${{ env.solutionPath }}/coreInfra.bicep
-        parameters: ${{ env.solutionDeploymentParamsPath }} environment=stg location=${{ env.region }}
+        parameters: >
+          ${{ env.solutionDeploymentParamsPath }} environment=stg location=${{ env.region }}
         deploymentMode: Validate
-        additionalArguments: "--what-if --rollback-on-error --what-if-exclude-change-types Create Ignore"
-
+        additionalArguments: "--what-if --rollback-on-error"
 
   job_deploy_to_staging:
     needs:
     - job_static_validation
+    - job_preview
     environment: stg
     runs-on: ubuntu-20.04
     name: 'Deploy to Staging for Validation'
@@ -143,8 +171,9 @@ jobs:
         subscriptionId: ${{ secrets.AZURE_SUBSCRIPTION }}
         scope: ${{ env.scope }}
         region: ${{ env.region }}
-        template: ${{ env.solutionPath }}/main.bicep
-        parameters: ${{ env.solutionDeploymentParamsPath }} environment=stg location=${{ env.region }}
+        template: ${{ env.solutionPath }}/coreInfra.bicep
+        parameters: >
+          ${{ env.solutionDeploymentParamsPath }} environment=stg location=${{ env.region }}
         failOnStdErr: false
         deploymentMode: Complete
 

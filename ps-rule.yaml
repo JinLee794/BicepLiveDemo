@@ -48,3 +48,6 @@ rule:
   # Ignore the following rules for all resources
     - Azure.KeyVault.PurgeProtect
     - Azure.Storage.ContainerSoftDelete
+    - Azure.Storage.SoftDelete
+    - Azure.Storage.Firewall
+    - Azure.KeyVault.Firewall

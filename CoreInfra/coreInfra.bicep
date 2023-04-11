@@ -104,12 +104,29 @@ module coreVNet 'br/modules:microsoft.network.virtualnetworks:0.4' = {
   params: {
     name: 'vnet'
     location: location
+    roleAssignments: roleAssignments
     addressPrefixes: [
       '10.10.0.0/16'
     ]
     tags: union(tags, {
       moduleSource: 'br/modules:microsoft.network.virtualnetworks'
       moduleVersion: '0.4'
+    })
+  }
+}
+
+// Storage Account
+@description('Core Infra Storage Account')
+module coreSA 'br/modules:microsoft.storage.storageaccounts:0.5' = {
+  scope: resourceGroup(coreRG.name)
+  name: storageAccountName
+  params: {
+    name: storageAccountName
+    location: location
+    roleAssignments: roleAssignments
+    tags: union(tags, {
+      moduleSource: 'br/modules:microsoft.storage.storageaccounts'
+      moduleVersion: '0.5'
     })
   }
 }
@@ -125,25 +142,10 @@ module coreKV 'br/modules:microsoft.keyvault.vaults:0.5' = {
     roleAssignments: roleAssignments
     diagnosticStorageAccountId: coreSA.outputs.resourceId
     diagnosticLogCategoriesToEnable: ['allLogs']
-
+    diagnosticMetricsToEnable: ['AllMetrics']
+    diagnosticLogsRetentionInDays: 30
     tags: union(tags, {
       moduleSource: 'br/modules:microsoft.keyvault.vaults'
-      moduleVersion: '0.5'
-    })
-  }
-}
-
-// Storage Account
-@description('Core Infra Storage Account')
-module coreSA 'br/modules:microsoft.storage.storageaccounts:0.5' = {
-  scope: resourceGroup(coreRG.name)
-  name: storageAccountName
-  params: {
-    name: storageAccountName
-    location: location
-
-    tags: union(tags, {
-      moduleSource: 'br/modules:microsoft.storage.storageaccounts'
       moduleVersion: '0.5'
     })
   }
