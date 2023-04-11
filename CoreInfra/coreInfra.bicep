@@ -44,10 +44,6 @@ param name string
 @description('Optional. The location to deploy into. Defaults to eastus')
 param location string = 'eastus'
 
-// @description('Optional. The name of the resource group to deploy')
-// @secure()
-// param secrets object = {}
-
 @description('Optional. Predefined role assignment')
 param roleAssignments array = []
 
@@ -61,9 +57,13 @@ var tags = {
   owner: owner
 }
 
-var resourceGroupName = '${name}-${location}-rg'
+@description('Optional. The admin username for the VM')
+param adminUsername string = 'adminuser'
+
+var resourceGroupName = '${name}-${location}-${environment}-rg'
 var keyVaultName = toLower('kv${name}')
 var storageAccountName = toLower('sa${name}')
+var vnetName = '${name}-${location}-${environment}-vnet'
 
 // =========== //
 // Data Lookup //
@@ -100,14 +100,24 @@ module coreRG 'br/modules:microsoft.resources.resourcegroups:0.5' = {
 @description ('Core Infra VNET')
 module coreVNet 'br/modules:microsoft.network.virtualnetworks:0.4' = {
   scope: az.resourceGroup(coreRG.name)
-  name: 'vnet'
+  name: vnetName
   params: {
-    name: 'vnet'
+    name: vnetName
     location: location
     roleAssignments: roleAssignments
     addressPrefixes: [
       '10.10.0.0/16'
     ]
+
+    subnets: [
+      {
+        name: 'cicdSubnet'
+        properties: {
+          addresPrefix: '10.10.0.0/26'
+        }
+      }
+    ]
+
     tags: union(tags, {
       moduleSource: 'br/modules:microsoft.network.virtualnetworks'
       moduleVersion: '0.4'
@@ -146,6 +156,54 @@ module coreKV 'br/modules:microsoft.keyvault.vaults:0.5' = {
     diagnosticLogsRetentionInDays: 30
     tags: union(tags, {
       moduleSource: 'br/modules:microsoft.keyvault.vaults'
+      moduleVersion: '0.5'
+    })
+  }
+}
+
+// Virtual Machine
+@description('SelfHosted Agent VM for CICD')
+module cicdVM 'br/modules:microsoft.compute.virtualmachines:0.6' = {
+  scope: az.resourceGroup(coreRG.name)
+  name: 'cicdVM'
+  params: {
+    name: 'cicdVM'
+    location: location
+    roleAssignments: roleAssignments
+    adminUsername: adminUsername
+    imageReference: {
+      publisher: 'Canonical'
+      offer: '0001-com-ubuntu-server-jammy'
+      sku: '22_04-lts-gen2'
+      version: 'latest'
+    }
+    nicConfigurations: [
+      {
+        ipConfigurations: [
+          {
+            name: 'ipconfig01'
+            pipConfiguration: {
+              publicIpNameSuffix: '-pip-01'
+            }
+            subnetResourceId: coreVNet.outputs.subnetResourceIds[0]
+          }
+        ]
+        nicSuffix: '-nic-01'
+      }
+    ]
+    osDisk: {
+      diskSizeGB: '128'
+      managedDisk: {
+        storageAccountType: 'Premium_LRS'
+      }
+    }
+    osType: 'Linux'
+    vmSize: 'Standard_DS2_v2'
+
+    diagnosticStorageAccountId: coreSA.outputs.resourceId
+    diagnosticLogsRetentionInDays: 30
+    tags: union(tags, {
+      moduleSource: 'br/modules:microsoft.compute.virtualmachines'
       moduleVersion: '0.5'
     })
   }
