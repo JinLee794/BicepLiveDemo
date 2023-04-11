@@ -120,8 +120,6 @@ jobs:
         Write-Output '::endgroup::'
 
   job_preview:
-    needs:
-    - job_static_validation
     environment: stg
     runs-on: ubuntu-20.04
     name: 'Preview Deployment'
@@ -137,6 +135,7 @@ jobs:
 
     - uses: azure/arm-deploy@v1
       name: Run What-If
+      id: what-if
       with:
         subscriptionId: ${{ secrets.ARM_SUBSCRIPTION_ID }}
         scope: ${{ env.scope }}
@@ -145,7 +144,9 @@ jobs:
         parameters: >
           ${{ env.solutionDeploymentParamsPath }} environment=stg location=${{ env.region }}
         deploymentMode: Validate
-        additionalArguments: "--what-if --rollback-on-error"
+        additionalArguments: "--what-if"
+
+    - run: echo ${{ steps.what-if.outputs }}
 
   job_deploy_to_staging:
     needs:
