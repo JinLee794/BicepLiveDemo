@@ -44,9 +44,9 @@ param name string
 @description('Optional. The location to deploy into. Defaults to eastus')
 param location string = 'eastus'
 
-@description('Optional. The name of the resource group to deploy')
-@secure()
-param secrets object = {}
+// @description('Optional. The name of the resource group to deploy')
+// @secure()
+// param secrets object = {}
 
 @description('Optional. Predefined role assignment')
 param roleAssignments array = []
@@ -99,7 +99,7 @@ module coreRG 'br/modules:microsoft.resources.resourcegroups:0.5' = {
 
 @description ('Core Infra VNET')
 module coreVNet 'br/modules:microsoft.network.virtualnetworks:0.4' = {
-  scope: resourceGroup(coreRG.name)
+  scope: az.resourceGroup(coreRG.name)
   name: 'vnet'
   params: {
     name: 'vnet'
@@ -118,7 +118,7 @@ module coreVNet 'br/modules:microsoft.network.virtualnetworks:0.4' = {
 // Storage Account
 @description('Core Infra Storage Account')
 module coreSA 'br/modules:microsoft.storage.storageaccounts:0.5' = {
-  scope: resourceGroup(coreRG.name)
+  scope: az.resourceGroup(coreRG.name)
   name: storageAccountName
   params: {
     name: storageAccountName
@@ -134,7 +134,7 @@ module coreSA 'br/modules:microsoft.storage.storageaccounts:0.5' = {
 // Key vault
 @description('Core Infra Key Vault')
 module coreKV 'br/modules:microsoft.keyvault.vaults:0.5' = {
-  scope: resourceGroup(coreRG.name)
+  scope: az.resourceGroup(coreRG.name)
   name: '${environment}${keyVaultName}'
   params: {
     name: keyVaultName
@@ -154,3 +154,7 @@ module coreKV 'br/modules:microsoft.keyvault.vaults:0.5' = {
 output storageAccountName string = coreSA.name
 output resourceGroupName string = coreRG.name
 output keyVaultName string = coreKV.name
+
+output storageAccount object = coreSA
+output resourceGroup object = coreRG
+output keyVault object = coreKV

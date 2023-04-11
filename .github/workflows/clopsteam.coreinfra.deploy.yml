@@ -124,7 +124,7 @@ jobs:
     - job_static_validation
     environment: stg
     runs-on: ubuntu-20.04
-    name: 'Deploy to Staging for Preview'
+    name: 'Preview Deployment'
     steps:
 
     # Checkout code
