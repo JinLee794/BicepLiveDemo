@@ -155,6 +155,6 @@ output storageAccountName string = coreSA.name
 output resourceGroupName string = coreRG.name
 output keyVaultName string = coreKV.name
 
-output storageAccount object = coreSA
-output resourceGroup object = coreRG
-output keyVault object = coreKV
+// output storageAccount object = coreSA
+// output resourceGroup object = coreRG
+// output keyVault object = coreKV
