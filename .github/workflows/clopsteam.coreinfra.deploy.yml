@@ -143,8 +143,8 @@ jobs:
         template: ${{ env.solutionPath }}/coreInfra.bicep
         parameters: >
           ${{ env.solutionDeploymentParamsPath }} environment=stg location=${{ env.region }}
-        deploymentMode: Validate
-        additionalArguments: "--what-if"
+        deploymentMode: Complete
+        additionalArguments: --what-if
 
     - run: echo ${{ steps.what-if.outputs }}
 
@@ -173,6 +173,7 @@ jobs:
         subscriptionId: ${{ secrets.AZURE_SUBSCRIPTION }}
         scope: ${{ env.scope }}
         region: ${{ env.region }}
+        deploymentName: ${{ github.run_number }}
         template: ${{ env.solutionPath }}/coreInfra.bicep
         parameters: >
           ${{ env.solutionDeploymentParamsPath }} environment=stg location=${{ env.region }}

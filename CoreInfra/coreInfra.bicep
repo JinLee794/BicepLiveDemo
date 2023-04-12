@@ -19,6 +19,7 @@ targetScope = 'subscription'
 // ================ //
 
 // Tagging & Naming Parameters
+@maxLength(4)
 @description('Required. The environment to deploy into (dev, test, prod, etc.)')
 param environment string = 'dev'
 
@@ -29,7 +30,7 @@ param costCenter string
 param owner string
 
 @minLength(3)
-@maxLength(22)
+@maxLength(18)
 @description('Required. The name of the application/deployment')
 param name string
 
@@ -58,12 +59,26 @@ var tags = {
 }
 
 @description('Optional. The admin username for the VM')
+@secure()
 param adminUsername string = 'adminuser'
 
-var resourceGroupName = '${name}-${location}-${environment}-rg'
-var keyVaultName = toLower('kv${name}')
-var storageAccountName = toLower('sa${name}')
-var vnetName = '${name}-${location}-${environment}-vnet'
+@description('Optional. The admin password for the VM')
+@secure()
+param adminPassword string = newGuid()
+
+var locationCodes = {
+  eastus: 'eus'
+  eastus2: 'eus2'
+  westus: 'wus'
+  westus2: 'wus2'
+  centralus: 'cus'
+  northcentralus: 'ncus'
+}
+var locationCode = locationCodes[location]
+var resourceGroupName = '${name}-${locationCode}-${environment}-rg'
+var keyVaultName = toLower('kv${name}${locationCode}${environment}')
+var storageAccountName = toLower('sa${name}${locationCode}${environment}')
+var vnetName = '${name}-${locationCode}-${environment}-vnet'
 
 // =========== //
 // Data Lookup //
@@ -91,7 +106,7 @@ module coreRG 'br/modules:microsoft.resources.resourcegroups:0.5' = {
     roleAssignments: roleAssignments
 
     tags: union(tags, {
-      moduleSource: 'br/modules:microsoft.resources.resourcegroups'
+      moduleSource: 'microsoft.resources.resourcegroups'
       moduleVersion: '0.5'
     })
   }
@@ -112,14 +127,12 @@ module coreVNet 'br/modules:microsoft.network.virtualnetworks:0.4' = {
     subnets: [
       {
         name: 'cicdSubnet'
-        properties: {
-          addresPrefix: '10.10.0.0/26'
-        }
+        addressPrefix: '10.10.0.0/26'
       }
     ]
 
     tags: union(tags, {
-      moduleSource: 'br/modules:microsoft.network.virtualnetworks'
+      moduleSource: 'microsoft.network.virtualnetworks'
       moduleVersion: '0.4'
     })
   }
@@ -135,7 +148,7 @@ module coreSA 'br/modules:microsoft.storage.storageaccounts:0.5' = {
     location: location
     roleAssignments: roleAssignments
     tags: union(tags, {
-      moduleSource: 'br/modules:microsoft.storage.storageaccounts'
+      moduleSource: 'microsoft.storage.storageaccounts'
       moduleVersion: '0.5'
     })
   }
@@ -154,8 +167,17 @@ module coreKV 'br/modules:microsoft.keyvault.vaults:0.5' = {
     diagnosticLogCategoriesToEnable: ['allLogs']
     diagnosticMetricsToEnable: ['AllMetrics']
     diagnosticLogsRetentionInDays: 30
+
+    secrets: {
+      secureList: [
+        {
+          name: '${cicdVM.name}-adminPassword'
+          value: adminPassword
+        }
+      ]
+    }
     tags: union(tags, {
-      moduleSource: 'br/modules:microsoft.keyvault.vaults'
+      moduleSource: 'modules:microsoft.keyvault.vaults'
       moduleVersion: '0.5'
     })
   }
@@ -171,6 +193,7 @@ module cicdVM 'br/modules:microsoft.compute.virtualmachines:0.6' = {
     location: location
     roleAssignments: roleAssignments
     adminUsername: adminUsername
+    adminPassword: adminPassword
     imageReference: {
       publisher: 'Canonical'
       offer: '0001-com-ubuntu-server-jammy'
@@ -194,7 +217,7 @@ module cicdVM 'br/modules:microsoft.compute.virtualmachines:0.6' = {
     osDisk: {
       diskSizeGB: '128'
       managedDisk: {
-        storageAccountType: 'Premium_LRS'
+        storageAccountType: 'Standard_LRS'
       }
     }
     osType: 'Linux'
@@ -203,11 +226,13 @@ module cicdVM 'br/modules:microsoft.compute.virtualmachines:0.6' = {
     diagnosticStorageAccountId: coreSA.outputs.resourceId
     diagnosticLogsRetentionInDays: 30
     tags: union(tags, {
-      moduleSource: 'br/modules:microsoft.compute.virtualmachines'
+      moduleSource: 'microsoft.compute.virtualmachines'
       moduleVersion: '0.5'
     })
   }
 }
+
+
 
 output storageAccountName string = coreSA.name
 output resourceGroupName string = coreRG.name
