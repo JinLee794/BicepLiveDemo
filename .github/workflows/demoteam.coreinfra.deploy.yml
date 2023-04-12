@@ -182,4 +182,8 @@ jobs:
         failOnStdErr: false
         deploymentMode: Complete
 
-    - run: echo ${{ steps.deploy.outputs }}
+    - run: |
+        echo 'StorageAccountName: ${{ steps.deploy.outputs.storageAccountName }}'
+        echo 'ResourceGroupName: ${{ steps.deploy.outputs.resourceGroupName }}'
+        echo 'KeyVaultName: ${{ steps.deploy.outputs.keyVaultName }}'
+        echo 'CICDVMName: ${{ steps.deploy.outputs.cicdVMName }}'
