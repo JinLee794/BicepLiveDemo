@@ -66,7 +66,7 @@ var tags = {
 
 @description('Optional. The admin username for the VM')
 @secure()
-param adminUsername string = 'adminuser'
+param adminUsername string = ''
 
 @description('Optional. The admin password for the VM')
 @secure()

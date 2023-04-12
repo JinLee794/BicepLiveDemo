@@ -20,6 +20,9 @@
       "addressPrefix": {
         "value": "10.10.0.0/16"
       },
+      "adminUsername": {
+        "value": "adminuser"
+      },
       "subnets": {
         "value": [
           {
