@@ -17,6 +17,17 @@
       "owner": {
         "value": "cloudops@contoso.com"
       },
+      "addressPrefix": {
+        "value": "10.10.0.0/16"
+      },
+      "subnets": {
+        "value": [
+          {
+            "name": "cicdSubnet",
+            "addressPrefix": "10.10.1.0/26"
+          }
+        ]
+      },
       "roleAssignments": {
         "value":
         [

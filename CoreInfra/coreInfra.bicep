@@ -48,8 +48,14 @@ param location string = 'eastus'
 @description('Optional. Predefined role assignment')
 param roleAssignments array = []
 
-// param devopsResourceGroupName string
-// param devopsKeyVaultName string
+@description('Optional. Subnets to create in the VNET')
+param subnets array = []
+
+@description('Optional. Subnet Resource ID to assign to the CICD VM')
+param cicdSubnetId string = ''
+
+@description('Optional. Address prefix to create the VNet with')
+param addressPrefix string = ''
 
 var tags = {
   deploymentTemplate: 'BicepLiveDemo/coreInfra'
@@ -81,14 +87,6 @@ var storageAccountName = toLower('sa${name}${locationCode}${environment}')
 var vnetName = '${name}-${locationCode}-${environment}-vnet'
 
 // =========== //
-// Data Lookup //
-// =========== //
-// resource keyVault 'Microsoft.KeyVault/vaults@2019-09-01' existing = {
-//   name: devopsKeyVaultName
-//   scope: resourceGroup(devopsResourceGroupName)
-// }
-
-// =========== //
 // Deployments //
 // =========== //
 // Note: This is where you can further standardize your deployments by using modules
@@ -113,7 +111,7 @@ module coreRG 'br/modules:microsoft.resources.resourcegroups:0.5' = {
 }
 
 @description ('Core Infra VNET')
-module coreVNet 'br/modules:microsoft.network.virtualnetworks:0.4' = {
+module coreVNet 'br/modules:microsoft.network.virtualnetworks:0.4' = if(addressPrefix != '') {
   scope: az.resourceGroup(coreRG.name)
   name: vnetName
   params: {
@@ -124,12 +122,7 @@ module coreVNet 'br/modules:microsoft.network.virtualnetworks:0.4' = {
       '10.10.0.0/16'
     ]
 
-    subnets: [
-      {
-        name: 'cicdSubnet'
-        addressPrefix: '10.10.0.0/26'
-      }
-    ]
+    subnets: subnets
 
     tags: union(tags, {
       moduleSource: 'microsoft.network.virtualnetworks'
@@ -185,7 +178,7 @@ module coreKV 'br/modules:microsoft.keyvault.vaults:0.5' = {
 
 // Virtual Machine
 @description('SelfHosted Agent VM for CICD')
-module cicdVM 'br/modules:microsoft.compute.virtualmachines:0.6' = {
+module cicdVM 'br/modules:microsoft.compute.virtualmachines:0.6' = if (!empty(subnets) || !empty(cicdSubnetId)) {
   scope: az.resourceGroup(coreRG.name)
   name: 'cicdVM'
   params: {
@@ -208,7 +201,7 @@ module cicdVM 'br/modules:microsoft.compute.virtualmachines:0.6' = {
             pipConfiguration: {
               publicIpNameSuffix: '-pip-01'
             }
-            subnetResourceId: coreVNet.outputs.subnetResourceIds[0]
+            subnetResourceId: (!empty(cicdSubnetId) ? cicdSubnetId : coreVNet.outputs.subnetResourceIds[0])
           }
         ]
         nicSuffix: '-nic-01'
@@ -237,7 +230,7 @@ module cicdVM 'br/modules:microsoft.compute.virtualmachines:0.6' = {
 output storageAccountName string = coreSA.name
 output resourceGroupName string = coreRG.name
 output keyVaultName string = coreKV.name
-
+output cicdVMName string = cicdVM.name
 // output storageAccount object = coreSA
 // output resourceGroup object = coreRG
 // output keyVault object = coreKV

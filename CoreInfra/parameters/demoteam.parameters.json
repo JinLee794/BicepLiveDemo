@@ -9,10 +9,13 @@
         "value": "demoCC"
       },
       "location": {
-        "value": "eastus2"
+        "value": "eastus"
       },
       "owner": {
         "value": "demoteam@contoso.com"
+      },
+      "cicdSubnetId": {
+        "value": "/subscriptions/22e39941-34af-48d2-8d93-3e35f5d796a9/resourceGroups/validation-rg/providers/Microsoft.Network/virtualNetworks/staging-vnet/subnets/devops"
       },
       "roleAssignments": {
         "value":
@@ -32,21 +35,6 @@
             ]
           }
         ]
-      },
-      "secrets": {
-        "value": {
-            "secureList": [
-                {
-                    "name": "secretName",
-                    "value": "secretValue",
-                    "contentType": "Something",
-                    "attributesExp": 1702648632,
-                    "attributesNbf": 10000,
-                    "roleAssignments": [
-                    ]
-                }
-            ]
-        }
       }
     }
   }
