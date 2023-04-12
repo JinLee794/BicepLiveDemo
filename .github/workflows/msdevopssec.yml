@@ -15,7 +15,7 @@ jobs:
   msdo-iac:
     # MSDO runs on windows-latest and ubuntu-latest.
     # macos-latest supporting coming soon
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
     environment: msdo
 
     steps:
@@ -37,7 +37,6 @@ jobs:
     - name: Run Microsoft Security DevOps Analysis
       uses: microsoft/security-devops-action@v1.6.0
       id: msdo
-
 
     # Upload alerts to the Security tab
     - name: Upload alerts to Security tab
