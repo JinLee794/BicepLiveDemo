@@ -18,7 +18,7 @@ on:
 
 env:
   scope: 'subscription'
-  region: 'eastus2'
+  region: 'eastus'
   resourceGroupName: 'CoreInfraBicepLive'
   solutionPath: 'CoreInfra'
   solutionDeploymentParamsPath: 'CoreInfra/parameters/clopsteam.parameters.json'
@@ -143,6 +143,7 @@ jobs:
         template: ${{ env.solutionPath }}/coreInfra.bicep
         parameters: >
           ${{ env.solutionDeploymentParamsPath }} environment=stg location=${{ env.region }}
+        deploymentName: ${{ github.run_number }}
         deploymentMode: Complete
         additionalArguments: --what-if
 

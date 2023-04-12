@@ -5,42 +5,180 @@ on:
     inputs:
       removeDeployment:
         type: boolean
-        description: 'Remove deployed module'
+        description: 'Remove the deployment instead of deploying it'
         required: false
         default: false
-  # push:
-  #   branches:
-  #     - main
-  #   paths:
-  #     - '.github/workflows/coreinfra.deploy.yml'
-  #     - 'CoreInfra/**'
+  push:
+    branches:
+      - main
+    paths:
+      - '.github/workflows/demoteam.coreinfra.deploy.yml'
+      - 'CoreInfra/coreInfra.bicep'
+      - 'CoreInfra/parameters/demoteam.parameters.json'
 
 env:
+  scope: 'subscription'
+  region: 'eastus'
   resourceGroupName: 'CoreInfraBicepLive'
-  modulePath: 'CoreInfra'
-  workflowPath: '.github/workflows/coreinfra.deploy.yml'
+  solutionPath: 'CoreInfra'
+  solutionDeploymentParamsPath: 'CoreInfra/parameters/demoteam.parameters.json'
+  workflowPath: '.github/workflows/demoteam.coreinfra.deploy.yml'
+
+permissions:
+  id-token: write
+  contents: read
+
 
 jobs:
-  build-and-deploy:
-    runs-on: ubuntu-latest
+  job_static_validation:
+    name: 'Preflight Validation'
+    runs-on: ubuntu-20.04
+    environment: stg
+    steps:
+      # Checkout code
+    - uses: actions/checkout@v3
+    - uses: azure/login@v1
+      with:
+        client-id: ${{ secrets.ARM_CLIENT_ID }}
+        tenant-id: ${{ secrets.ARM_TENANT_ID }}
+        subscription-id: ${{ secrets.ARM_SUBSCRIPTION_ID }}
+
+    - name: 'Install Bicep CLI'
+      run: |
+        curl -Lo bicep https://github.com/Azure/bicep/releases/latest/download/bicep-linux-x64
+        chmod +x ./bicep
+        # cp ${{ env.solutionDeploymentParamsPath }} ${{ env.solutionPath }}/coreInfra.parameters.json
+
+    - uses: azure/arm-deploy@v1
+      name: Validate Bicep
+      with:
+        subscriptionId: ${{ secrets.ARM_SUBSCRIPTION_ID }}
+        scope: ${{ env.scope }}
+        region: ${{ env.region }}
+        template: ${{ env.solutionPath }}/coreInfra.bicep
+        parameters: >
+          ${{ env.solutionDeploymentParamsPath }} environment=stg location=${{ env.region }}
+        deploymentMode: Validate
+
+    # Run analysis by using the PSRule GitHub action.
+    - name: Run PSRule analysis
+      uses: microsoft/ps-rule@v2.4.0
+      continue-on-error: true # Setting this whilst PSRule gets bedded in, in this project
+      with:
+        modules: 'PSRule.Rules.Azure'
+        inputType: repository
+        inputPath: ${{ env.solutionDeploymentParamsPath }}
+        outputFormat: Csv
+        outputPath: '${{ env.solutionPath }}-PSRule-output.csv'
+      env:
+        PSRULE_OUTPUT_FORMAT: Yaml
+        PSRULE_AZURE_BICEP_USE_AZURE_CLI: true
+        PSRULE_AZURE_BICEP_PATH: './bicep'
+
+    - name: Parse CSV content
+      if: always()
+      uses: azure/powershell@v1
+      with:
+        azPSVersion: 'latest'
+        inlineScript: |
+          # Grouping task logs
+          Write-Output '::group::Parse CSV content'
+
+          # Load used functions
+          . (Join-Path $env:GITHUB_WORKSPACE 'utilities' 'pipelines' 'PSRuleValidation' 'Set-PSRuleGitHubOutput.ps1')
+
+          # Populate parameter input
+          $ParameterInput = @{
+            inputFilePath           = '${{ env.solutionPath }}-PSRule-output.csv'
+            outputFilePath          = '${{ env.solutionPath }}-PSRule-output.md'
+            skipPassedRulesReport   = $false
+          }
+
+          Write-Verbose ('Set PS Rule Output with following parameters:`n{0}' -f (ConvertTo-Json $ParameterInput -Depth 10)) -Verbose
+
+          # Invoke Set PSRule Output Functionality
+          $null = Set-PSRuleGitHubOutput @ParameterInput
+
+          Write-Output '::endgroup::'
+
+    - name: Output to GitHub job summaries
+      if: always()
+      shell: pwsh
+      run: |
+        # Grouping task logs
+        Write-Output '::group::Output to GitHub job summaries'
+
+        $mdPSRuleOutputFilePath = Join-Path $env:GITHUB_WORKSPACE '${{ env.solutionPath }}-PSRule-output.md'
+
+        if (-not (Test-Path $mdPSRuleOutputFilePath)) {
+          Write-Warning ('Input file [{0}] not found. Please check if the previous task threw an error and try again.' -f $mdPSRuleOutputFilePath)
+          return ''
+        } else {
+          Get-Content $mdPSRuleOutputFilePath >> $env:GITHUB_STEP_SUMMARY
+          Write-Verbose ('Successfully printed out file [{0}] to Job Summaries' -f $mdPSRuleOutputFilePath) -Verbose
+        }
+
+        Write-Output '::endgroup::'
+
+  job_preview:
+    environment: stg
+    runs-on: ubuntu-20.04
+    name: 'Preview Deployment'
     steps:
 
-      # Checkout code
-    - uses: actions/checkout@main
-
-    - name: Azure Login
-      uses: Azure/login@v1
+    # Checkout code
+    - uses: actions/checkout@v3
+    - uses: azure/login@v1
       with:
-        creds: ${{ secrets.AZURE_CREDENTIALS }}
+        client-id: ${{ secrets.ARM_CLIENT_ID }}
+        tenant-id: ${{ secrets.ARM_TENANT_ID }}
+        subscription-id: ${{ secrets.ARM_SUBSCRIPTION_ID }}
 
-      # Deploy Bicep file
+    - uses: azure/arm-deploy@v1
+      name: Run What-If
+      id: what-if
+      with:
+        subscriptionId: ${{ secrets.ARM_SUBSCRIPTION_ID }}
+        scope: ${{ env.scope }}
+        region: ${{ env.region }}
+        template: ${{ env.solutionPath }}/coreInfra.bicep
+        parameters: >
+          ${{ env.solutionDeploymentParamsPath }} environment=stg location=${{ env.region }}
+        deploymentName: ${{ github.run_number }}
+        deploymentMode: Complete
+        additionalArguments: --what-if
+
+    - run: echo ${{ steps.what-if.outputs }}
+
+  job_deploy_to_staging:
+    needs:
+    - job_static_validation
+    - job_preview
+    environment: stg
+    runs-on: ubuntu-20.04
+    name: 'Deploy to Staging for Validation'
+    steps:
+
+    # Checkout code
+    - uses: actions/checkout@v3
+    - uses: azure/login@v1
+      with:
+        client-id: ${{ secrets.ARM_CLIENT_ID }}
+        tenant-id: ${{ secrets.ARM_TENANT_ID }}
+        subscription-id: ${{ secrets.ARM_SUBSCRIPTION_ID }}
+
+    # Deploy Bicep file
     - name: deploy
+      id: deploy
       uses: azure/arm-deploy@v1
       with:
         subscriptionId: ${{ secrets.AZURE_SUBSCRIPTION }}
-        scope: subscription
-        template: '${{ env.modulePath }}/main.bicep'
-        parameters: '${{ env.modulePath }}/dev.json'
+        scope: ${{ env.scope }}
+        region: ${{ env.region }}
+        deploymentName: ${{ github.run_number }}
+        template: ${{ env.solutionPath }}/coreInfra.bicep
+        parameters: >
+          ${{ env.solutionDeploymentParamsPath }} environment=stg location=${{ env.region }}
         failOnStdErr: false
         deploymentMode: Complete
 
