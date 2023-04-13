@@ -15,13 +15,13 @@
         "value": "eastus"
       },
       "owner": {
-        "value": "cloudops@contoso.com"
+        "value": "cloudops2@contoso.com"
       },
       "addressPrefix": {
         "value": "10.10.0.0/16"
       },
       "adminUsername": {
-        "value": "adminuser2"
+        "value": "adminuser"
       },
       "subnets": {
         "value": [
