@@ -12,7 +12,7 @@
         "value": "eastus"
       },
       "owner": {
-        "value": "demoteam@contoso.com"
+        "value": "demoteam2@contoso.com"
       },
       "cicdSubnetId": {
         "value": "/subscriptions/22e39941-34af-48d2-8d93-3e35f5d796a9/resourceGroups/validation-rg/providers/Microsoft.Network/virtualNetworks/staging-vnet/subnets/devops"

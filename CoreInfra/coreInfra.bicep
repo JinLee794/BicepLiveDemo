@@ -81,9 +81,11 @@ var locationCodes = {
   northcentralus: 'ncus'
 }
 var locationCode = locationCodes[location]
+var commonName = '${name}${locationCode}${environment}'
+
 var resourceGroupName = '${name}-${locationCode}-${environment}-rg'
-var keyVaultName = toLower('kv${name}${locationCode}${environment}')
-var storageAccountName = toLower('sa${name}${locationCode}${environment}')
+var keyVaultName = (length('kv${commonName}') > 23) ? substring(toLower('kv${commonName}'),0,23) : toLower('kv${commonName}')
+var storageAccountName = (length('sa${commonName}') > 23) ? substring(toLower('sa${commonName}'),0,23) : toLower('sa${commonName}')
 var vnetName = '${name}-${locationCode}-${environment}-vnet'
 
 // =========== //
@@ -189,8 +191,8 @@ module cicdVM 'br/modules:microsoft.compute.virtualmachines:0.6' = if (!empty(su
     adminPassword: adminPassword
     imageReference: {
       publisher: 'Canonical'
-      offer: '0001-com-ubuntu-server-jammy'
-      sku: '22_04-lts-gen2'
+      offer: 'UbuntuServer'
+      sku: '19.04'
       version: 'latest'
     }
     nicConfigurations: [
