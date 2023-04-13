@@ -195,7 +195,7 @@ jobs:
     if: github.ref == 'refs/heads/main'
     needs:
     - job_deploy_to_staging
-    environment: prod
+    environment: stg
     runs-on: ubuntu-20.04
     name: 'Preview Deployment to Production'
     steps:
@@ -257,40 +257,3 @@ jobs:
         deploymentMode: Complete
 
     - run: echo ${{ steps.deploy.outputs }}
-
-  job_cleanup:
-    runs-on: ubuntu-20.04
-    name: 'Cleanup'
-    steps:
-
-    - name: Cleanup
-      if: always()
-      shell: pwsh
-      run: |
-        # Grouping task logs
-        Write-Output '::group::Cleanup'
-
-        $solutionPath = Join-Path $env:GITHUB_WORKSPACE '${{ env.solutionPath }}'
-
-        if (Test-Path $solutionPath) {
-          Remove-Item -Path $solutionPath -Recurse -Force -ErrorAction SilentlyContinue
-          Write-Verbose ('Successfully removed solution path [{0}]' -f $solutionPath) -Verbose
-        } else {
-          Write-Verbose ('Solution path [{0}] not found' -f $solutionPath) -Verbose
-        }
-
-        Write-Output '::endgroup::'
-
-  job_cleanup_artifacts:
-    runs-on: ubuntu-20.04
-    name: 'Cleanup Artifacts'
-    steps:
-
-    - name: Cleanup Artifacts
-      if: always()
-      shell: pwsh
-      run: |
-        # Grouping task logs
-        Write-Output '::group::Cleanup Artifacts'
-
-        $solutionPath = Join-Path $env:GITHUB_WORKSPACE '${{
