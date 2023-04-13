@@ -81,9 +81,11 @@ var locationCodes = {
   northcentralus: 'ncus'
 }
 var locationCode = locationCodes[location]
+var commonName = '${name}${locationCode}${environment}'
+
 var resourceGroupName = '${name}-${locationCode}-${environment}-rg'
-var keyVaultName = substring(toLower('kv${name}${locationCode}${environment}'), 0, 23)
-var storageAccountName = substring(toLower('sa${name}${locationCode}${environment}'), 0, 23)
+var keyVaultName = (length('kv${commonName}') > 23) ? substring(toLower('kv${commonName}'),0,23) : toLower('kv${commonName}')
+var storageAccountName = (length('sa${commonName}') > 23) ? substring(toLower('sa${commonName}'),0,23) : toLower('sa${commonName}')
 var vnetName = '${name}-${locationCode}-${environment}-vnet'
 
 // =========== //
