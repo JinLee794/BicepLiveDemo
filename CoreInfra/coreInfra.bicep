@@ -82,8 +82,8 @@ var locationCodes = {
 }
 var locationCode = locationCodes[location]
 var resourceGroupName = '${name}-${locationCode}-${environment}-rg'
-var keyVaultName = toLower('kv${name}${locationCode}${environment}')
-var storageAccountName = toLower('sa${name}${locationCode}${environment}')
+var keyVaultName = substring(toLower('kv${name}${locationCode}${environment}'), 0, 23)
+var storageAccountName = substring(toLower('sa${name}${locationCode}${environment}'), 0, 23)
 var vnetName = '${name}-${locationCode}-${environment}-vnet'
 
 // =========== //
