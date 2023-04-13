@@ -15,7 +15,7 @@
         "value": "eastus"
       },
       "owner": {
-        "value": "cloudops2@contoso.com"
+        "value": "cloudops22@contoso.com"
       },
       "addressPrefix": {
         "value": "10.10.0.0/16"
