@@ -1,3 +1,2 @@
 # Assign owners based on naming convention to be included in PRs
-**/clopsteam.* @JinLee794
-**/demoteam.* @JinLee794
+CoreInfra/  @JinLee794
