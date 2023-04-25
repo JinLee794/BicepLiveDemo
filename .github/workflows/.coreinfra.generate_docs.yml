@@ -66,6 +66,6 @@ jobs:
       with:
         # conventions: Azure.NameByParentPath
         modules: PSDocs.Azure
-        inputPath: ${{ env.inputPath }}.json
+        inputPath: CoreInfra
         outputPath: '${{ env.outputPath }}'
         prerelease: true
