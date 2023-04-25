@@ -19,6 +19,7 @@ jobs:
 
     - name: Install Azure CLI
       run: |
+        pwd
         echo "Input path: ${{ env.inputPath }}"
         ls -al CoreInfra
 
