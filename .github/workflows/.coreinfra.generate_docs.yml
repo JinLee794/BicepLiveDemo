@@ -82,6 +82,7 @@ jobs:
           $version = $template.Directory.Name;
           $docName = "$($templateName)_$version";
           # Generate markdown
-          Invoke-PSDocument -Module PSDocs.Azure -OutputPath out/docs/ -InputObject $template.FullName -InstanceName $docName;
+          $option = New-PSDocumentOption -Option @{ 'Output.Culture' = 'en-US' }
+          Invoke-PSDocument -Module PSDocs.Azure -OutputPath out/docs/ -InputObject $template.FullName -InstanceName $docName -Option $option;
         }
       shell: pwsh
