@@ -5,6 +5,7 @@ on:
     branches: [ main, feature/auto-docs ]
     paths:
       - 'CoreInfra/*.bicep'
+      - '.ps-docs/*.Doc.ps1'
       - '.github/workflows/.coreinfra.generate_docs.yml'
 
 env:
