@@ -6,6 +6,7 @@ on:
     paths:
       - 'CoreInfra/*.bicep'
       - '.github/workflows/.coreinfra.generate_docs.yml'
+
 env:
   inputPath: CoreInfra/coreInfra.bicep
   outputPath: CoreInfra/CoreInfra.md
