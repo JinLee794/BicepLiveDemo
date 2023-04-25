@@ -64,7 +64,7 @@ jobs:
     - name: Generate docs
       uses: microsoft/ps-docs@v0.1.0
       with:
-        conventions: Azure.NameByParentPath
+        # conventions: Azure.NameByParentPath
         modules: PSDocs.Azure
         inputPath: ${{ env.inputPath }}.json
         outputPath: '${{ env.outputPath }}'
