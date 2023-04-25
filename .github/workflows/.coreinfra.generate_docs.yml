@@ -9,6 +9,11 @@ on:
 env:
   inputPath: CoreInfra/coreInfra.bicep
   outputPath: CoreInfra/CoreInfra.md
+
+permissions:
+  id-token: write
+  contents: read
+
 jobs:
   publish:
     environment: stg
