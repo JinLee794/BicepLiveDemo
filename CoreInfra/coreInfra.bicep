@@ -41,7 +41,6 @@ param name string
   'westus2'
   'centralus'
   'northcentralus'
-  'southcentralus'
 ])
 @description('Optional. The location to deploy into. Defaults to eastus')
 param location string = 'eastus'

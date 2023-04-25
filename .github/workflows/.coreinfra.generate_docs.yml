@@ -2,7 +2,7 @@ name: Publish CoreInfra docs
 on:
   workflow_dispatch:
   push:
-    branches: [ main ]
+    branches: [ main, feature/auto-docs ]
     paths:
       - 'CoreInfra/*.bicep'
 env:
