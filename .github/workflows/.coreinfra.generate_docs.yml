@@ -31,7 +31,7 @@ jobs:
     - name: Bicep Build
       uses: Azure/bicep-build-action@v1.0.0
       with:
-        bicepFilePath: ${{ env.inputPath }}
+        bicepFilePath: '${{github.workspace}}/${{ env.inputPath }}'
         outputFilePath: ${{ env.inputPath }}.json
 
     # Generate markdown files using PSDocs
