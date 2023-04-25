@@ -67,5 +67,5 @@ jobs:
         conventions: Azure.NameByParentPath
         modules: PSDocs.Azure
         inputPath: ${{ env.inputPath }}.json
-        # outputPath: '${{ env.GITHUB_WORKSPACE }}/${{ env.outputPath }}'
+        outputPath: '${{ env.outputPath }}'
         prerelease: true
