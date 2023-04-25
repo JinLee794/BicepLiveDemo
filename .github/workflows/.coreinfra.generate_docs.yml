@@ -11,6 +11,7 @@ env:
   outputPath: CoreInfra/CoreInfra.md
 jobs:
   publish:
+    environment: stg
     name: Publish
     runs-on: ubuntu-latest
     steps:
@@ -29,6 +30,11 @@ jobs:
 
         curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash
 
+    - uses: azure/login@v1
+      with:
+        client-id: ${{ secrets.ARM_CLIENT_ID }}
+        tenant-id: ${{ secrets.ARM_TENANT_ID }}
+        subscription-id: ${{ secrets.ARM_SUBSCRIPTION_ID }}
 
     # - name: Azure CLI script
     #   uses: azure/CLI@v1
