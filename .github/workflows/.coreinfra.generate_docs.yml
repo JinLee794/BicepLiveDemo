@@ -23,6 +23,6 @@ jobs:
       with:
         conventions: Azure.NameByParentPath
         modules: PSDocs,PSDocs.Azure
-        inputPath: ${{ env.inputPath }}
-        outputPath: ${{ env.outputPath }}
+        inputPath: '${{ env.GITHUB_WORKSPACE }}/${{ env.inputPath }}'
+        outputPath: '${{ env.GITHUB_WORKSPACE }}/${{ env.outputPath }}'
         prerelease: true
