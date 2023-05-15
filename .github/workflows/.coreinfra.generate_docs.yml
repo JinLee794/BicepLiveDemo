@@ -19,9 +19,9 @@ permissions:
   contents: read
 
 jobs:
-  publish:
+  update-docs:
     environment: stg
-    name: Publish
+    name: "Update/Generate Documentation"
     runs-on: ubuntu-latest
     steps:
 
@@ -86,10 +86,16 @@ jobs:
           $template = Get-Item -Path $_.TemplateFile;
           $templateName = $template.Directory.Parent.Name;
           $version = $template.Directory.Name;
-          $docName = "$($templateName)_$version";
-          # Generate markdown
+          # $docName = "$($templateName)_$version";
+          $docName = "$version.deploy";
           $option = New-PSDocumentOption -Option @{ 'Output.Culture' = 'en-US' }
-          Invoke-PSDocument -Module PSDocs.Azure -OutputPath out/docs/ -InputObject $template.FullName -InstanceName $docName -Option $option;
+          $dirPath = $template.Directory.FullName;
+
+          # Generate markdown
+          Invoke-PSDocument -Module PSDocs.Azure -OutputPath $dirPath `
+            -InputObject $template.FullName `
+            -InstanceName $docName `
+            -Option $option;
         }
       shell: pwsh
 
