@@ -25,45 +25,36 @@ jobs:
     runs-on: ubuntu-latest
     steps:
 
+    # Checkout current repo with a PAT that has repo update permissions
     - uses: actions/checkout@v2
       name: "Checkout with Repo Update PAT"
       with:
         fetch-depth: 0
         token: "${{ secrets.REPO_UPDATE_PAT }}" # Sets general GIT credentials up
 
+    # Install Azure CLI
     - name: Install Azure CLI
       run: |
-        pwd
-        echo "Input path: ${{ env.inputPath }}"
-        ls -al CoreInfra
-
-        echo "Working Dir"
-        ls -al ./
-
-
         curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash
 
+    # Login to Azure CLI to decompile nested bicep modules
     - uses: azure/login@v1
       with:
         client-id: ${{ secrets.ARM_CLIENT_ID }}
         tenant-id: ${{ secrets.ARM_TENANT_ID }}
         subscription-id: ${{ secrets.ARM_SUBSCRIPTION_ID }}
 
-    # - name: Azure CLI script
-    #   uses: azure/CLI@v1
-    #   with:
-    #     azcliversion: latest
-    #     inlineScript: |
-    #       az bicep build \
-    #         --file ${{ env.inputPath }} \
-    #         --outfile ${{ env.inputPath }}.json
-
+    # Since the PSDocs.Azure Powershell modules do not natively support
+    #  bicep currently, decompile bicep into ARM templates
     - name: Bicep Build
       uses: Azure/bicep-build-action@v1.0.0
       with:
         bicepFilePath: '${{github.workspace}}/${{ env.inputPath }}'
         outputFilePath: ${{ env.inputPath }}.json
 
+    # ------------------------------------------------------
+    # CURRENTLY NOT WORKING, PENDING FURTHER INVESTIGATION
+    # ------------------------------------------------------
     # Generate markdown files using PSDocs
     # Scan for Azure template file recursively in sub-directories
     # Then generate a docs using a standard naming convention. i.e. <name>_<version>.md
@@ -76,7 +67,7 @@ jobs:
     #     outputPath: '${{ env.outputPath }}'
     #     prerelease: true
 
-            # STEP 1: Generate Markdowns using PSDocs
+    # Generate Markdowns using PSDocs
     - name: Generate ARM markdowns
       run: |
         Install-Module -Name 'PSDocs.Azure' -Repository PSGallery -force;
@@ -102,6 +93,7 @@ jobs:
         }
       shell: pwsh
 
+    # Write the generated markdowns to the current branch
     - name: 'Push changes'
       shell: pwsh
       run: |
