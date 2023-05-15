@@ -67,14 +67,14 @@ jobs:
     # Generate markdown files using PSDocs
     # Scan for Azure template file recursively in sub-directories
     # Then generate a docs using a standard naming convention. i.e. <name>_<version>.md
-    - name: Generate docs
-      uses: microsoft/ps-docs@v0.1.0
-      with:
-        # conventions: Azure.NameByParentPath
-        modules: PSDocs.Azure
-        inputPath: CoreInfra
-        outputPath: '${{ env.outputPath }}'
-        prerelease: true
+    # - name: Generate docs
+    #   uses: microsoft/ps-docs@v0.1.0
+    #   with:
+    #     # conventions: Azure.NameByParentPath
+    #     modules: PSDocs.Azure
+    #     inputPath: CoreInfra
+    #     outputPath: '${{ env.outputPath }}'
+    #     prerelease: true
 
             # STEP 1: Generate Markdowns using PSDocs
     - name: Generate ARM markdowns
