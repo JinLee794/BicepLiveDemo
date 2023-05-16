@@ -1,28 +1,106 @@
 name: Publish CoreInfra docs
 on:
+  workflow_dispatch:
   push:
-    branches: [ main ]
+    branches: [ main, feature/auto-docs ]
     paths:
       - 'CoreInfra/*.bicep'
+      - '.ps-docs/*.Doc.ps1'
+      - '.github/workflows/.coreinfra.generate_docs.yml'
+
 env:
-  inputPath: CoreInfra/
-  outputPath: CoreInfra/
+  pipelinePrincipalGitUserName: 'BLDPipelinePrincipal'
+  pipelinePrincipalGitUserEmail: 'BLDPipelinePrincipal@noreply.github.com'
+  inputPath: CoreInfra/coreInfra.bicep
+  outputPath: CoreInfra/CoreInfra.md
+
+permissions:
+  id-token: write
+  contents: read
+
 jobs:
-  publish:
-    name: Publish
+  update-docs:
+    environment: stg
+    name: "Update/Generate Documentation"
     runs-on: ubuntu-latest
     steps:
 
+    # Checkout current repo with a PAT that has repo update permissions
     - uses: actions/checkout@v2
+      name: "Checkout with Repo Update PAT"
+      with:
+        fetch-depth: 0
+        token: "${{ secrets.REPO_UPDATE_PAT }}" # Sets general GIT credentials up
 
+    # Install Azure CLI
+    - name: Install Azure CLI
+      run: |
+        curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash
+
+    # Login to Azure CLI to decompile nested bicep modules
+    - uses: azure/login@v1
+      with:
+        client-id: ${{ secrets.ARM_CLIENT_ID }}
+        tenant-id: ${{ secrets.ARM_TENANT_ID }}
+        subscription-id: ${{ secrets.ARM_SUBSCRIPTION_ID }}
+
+    # Since the PSDocs.Azure Powershell modules do not natively support
+    #  bicep currently, decompile bicep into ARM templates
+    - name: Bicep Build
+      uses: Azure/bicep-build-action@v1.0.0
+      with:
+        bicepFilePath: '${{github.workspace}}/${{ env.inputPath }}'
+        outputFilePath: ${{ env.inputPath }}.json
+
+    # ------------------------------------------------------
+    # CURRENTLY NOT WORKING, PENDING FURTHER INVESTIGATION
+    # ------------------------------------------------------
     # Generate markdown files using PSDocs
     # Scan for Azure template file recursively in sub-directories
     # Then generate a docs using a standard naming convention. i.e. <name>_<version>.md
-    - name: Generate docs
-      uses: microsoft/ps-docs@main
-      with:
-        conventions: Azure.NameByParentPath
-        modules: PSDocs,PSDocs.Azure
-        inputPath: ${{ env.inputPath }}
-        outputPath: ${{ env.outputPath }}
-        prerelease: true
+    # - name: Generate docs
+    #   uses: microsoft/ps-docs@v0.1.0
+    #   with:
+    #     # conventions: Azure.NameByParentPath
+    #     modules: PSDocs.Azure
+    #     inputPath: CoreInfra
+    #     outputPath: '${{ env.outputPath }}'
+    #     prerelease: true
+
+    # Generate Markdowns using PSDocs
+    - name: Generate ARM markdowns
+      run: |
+        Install-Module -Name 'PSDocs.Azure' -Repository PSGallery -force;
+        # Scan for Azure template file recursively in the templates/ directory
+        Get-AzDocTemplateFile -Path CoreInfra/ | ForEach-Object {
+          # Generate a standard name of the markdown file. i.e. <name>_<version>.md
+          $template = Get-Item -Path $_.TemplateFile;
+          $templateName = $template.Directory.Parent.Name;
+          $version = $template.Directory.Name;
+          # $docName = "$($templateName)_$version";
+          $docName = "$version.deploy";
+          $option = New-PSDocumentOption -Option @{ 'Output.Culture' = 'en-US' }
+          $dirPath = $template.Directory.FullName;
+
+          # Generate markdown
+          Invoke-PSDocument -Module PSDocs.Azure -OutputPath $dirPath `
+            -InputObject $template.FullName `
+            -InstanceName $docName `
+            -Option $option;
+
+          # Remove the template file
+          Remove-Item -Path $template.FullName;
+        }
+      shell: pwsh
+
+    # Write the generated markdowns to the current branch
+    - name: 'Push changes'
+      shell: pwsh
+      run: |
+        git config --global user.email '${{ env.pipelinePrincipalGitUserEmail }}'
+        git config --global user.name '${{ env.pipelinePrincipalGitUserName }}'
+
+        git pull
+        git add .
+        git commit -m "Push updated Readme file(s)"
+        git push
